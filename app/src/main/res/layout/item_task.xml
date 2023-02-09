@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="40dp"
-    android:layout_marginRight="40dp"
     android:layout_marginTop="10dp"
+    android:layout_marginRight="40dp"
     app:cardBackgroundColor="@color/space_cadet"
     app:cardCornerRadius="10dp">
 
@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="12dp"
         android:paddingVertical="12dp"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="UnusedAttribute"
+        >
 
 
         <CheckBox
@@ -24,15 +25,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
+            android:button="@drawable/ic_checkbox_circle"
             android:minWidth="0dp"
             android:minHeight="0dp"
-            android:button="@drawable/ic_checkbox_circle"
-            app:layout_constraintBottom_toBottomOf="@id/priority"
-            app:layout_constraintEnd_toStartOf="@+id/task_title"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:scaleX="1.0"
+            android:scaleY="1.0"
+            app:layout_constraintBottom_toTopOf="@+id/priority"
+            app:layout_constraintEnd_toStartOf="@+id/textview_task_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.084"
+            app:layout_constraintVertical_bias="0.5"
             />
 
         <TextView
@@ -45,33 +47,41 @@
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/priority"
             app:layout_constraintStart_toEndOf="@+id/checkbox_completed"
-            app:layout_constraintTop_toTopOf="@id/checkbox_completed"
-            />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
 
         <TextView
             android:id="@+id/priority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="0dp"
             android:textColor="@color/white"
-
             android:textSize="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/deadline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/checkbox_completed"
+            app:layout_constraintTop_toBottomOf="@+id/checkbox_completed"
+            app:layout_constraintVertical_bias="0.5"
             tools:text="priority" />
 
-            <TextView
-                android:id="@+id/deadline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="4dp"
-                android:padding="4dp"
-                android:textColor="@color/nickel"
-                android:textSize="16sp"
-                app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
-                app:drawableTint="@color/nickel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/priority"
-                tools:text="2020-05-06" />
+        <TextView
+            android:id="@+id/deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:drawablePadding="4dp"
+            android:padding="4dp"
+            android:paddingStart="11dp"
+            android:paddingEnd="0dp"
+            android:textColor="@color/nickel"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
+            app:drawableTint="@color/nickel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/priority"
+            app:layout_constraintVertical_bias="0.5"
+            tools:text="2020-05-06" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

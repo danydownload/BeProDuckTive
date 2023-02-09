@@ -1,16 +1,16 @@
 package com.example.beproducktive.utils
 
 import androidx.room.TypeConverter
+import java.text.SimpleDateFormat
 import java.util.*
 
-class Converters {
-    @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
-        return value?.let { Date(it) }
-    }
+public class Converters {
 
-//    @TypeConverter
-//    fun dateToTimestamp(date: Date?): Long? {
-//        return date?.time?.toLong()
-//    }
+    @TypeConverter
+    public fun fromDate(deadline: Date?): String? =
+        SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).format(deadline!!)
+
+    @TypeConverter
+    public fun stringToDate(value: String?): Date? =
+        SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).parse(value!!)
 }

@@ -4,7 +4,7 @@ package com.example.beproducktive.ui.tasks
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.example.beproducktive.data.Task
+import com.example.beproducktive.data.tasks.Task
 
 class TasksAdapter : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
 
@@ -20,7 +20,7 @@ class TasksAdapter : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
     companion object {
         private val TASKS_COMPARATOR = object : DiffUtil.ItemCallback<Task>() {
             override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean =
-                oldItem.id == newItem.id
+                oldItem.taskId == newItem.taskId
 
             override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean =
                 oldItem == newItem

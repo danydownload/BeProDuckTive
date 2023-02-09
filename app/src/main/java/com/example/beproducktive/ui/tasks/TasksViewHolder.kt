@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beproducktive.R
-import com.example.beproducktive.data.Task
-import com.example.beproducktive.data.TaskPriority
+import com.example.beproducktive.data.tasks.Task
+import com.example.beproducktive.data.tasks.TaskPriority
 import com.example.beproducktive.databinding.ItemTaskBinding
 
 class TasksViewHolder(

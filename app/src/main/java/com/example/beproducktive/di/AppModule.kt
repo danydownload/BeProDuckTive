@@ -2,7 +2,7 @@ package com.example.beproducktive.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.beproducktive.data.TaskDatabase
+import com.example.beproducktive.data.tasks.TaskDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +28,9 @@ object AppModule {
 
     @Provides
     fun provideTaskDao(db: TaskDatabase) = db.taskDao()
+
+    @Provides
+    fun provideProjectDao(db: TaskDatabase) = db.projectDao()
 
     @ApplicationScope
     @Provides

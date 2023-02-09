@@ -25,7 +25,7 @@ ext {
 
     // App dependencies
     activityVersion = "1.6.1"
-    appCompatVersion = "1.6.0"
+    appCompatVersion = "1.6.1"
     constraintLayoutVersion = "2.1.4"
     coroutinesVersion = "1.6.4"
     dataStoreVersion = "1.0.0"
@@ -38,7 +38,7 @@ ext {
     kotlinVersion = "1.8.0"
     ktxVersion = "1.9.0"
     lifecycleVersion = "2.5.1"
-    materialVersion = "1.7.0"
+    materialVersion = "1.8.0"
     navigationVersion = "2.5.3"
     roomVersion = "2.5.0"
     testExtJunitVersion = "1.1.5"

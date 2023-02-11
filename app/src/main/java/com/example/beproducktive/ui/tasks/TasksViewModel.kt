@@ -3,6 +3,7 @@ package com.example.beproducktive.ui.tasks
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.beproducktive.data.projectandtasks.ProjectAndTasks
+import com.example.beproducktive.data.projects.Project
 import com.example.beproducktive.data.projects.ProjectDao
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskDao
@@ -17,12 +18,18 @@ class TasksViewModel @Inject constructor(
     private val projectDao: ProjectDao
 ) : ViewModel() {
 
-//    val tasks = taskDao.getTasks().asLiveData()
-//    val tasks = taskDao.getTasksByProjectName("Personal").asLiveData()
+
+    val projects: LiveData<List<Project>> = liveData {
+        val projects = projectDao.getProjects().first()
+        emit(projects)
+    }
 
     val tasks : LiveData<List<Task>> = liveData {
-        val task = projectDao.getByProjectName("Other Things").first()[0]
+        val firstProject = projectDao.getProjects().first()[0].projectName
+        val task = projectDao.getByProjectName(firstProject).first()[0]
         emit(task.tasks)
     }
+
+
 
 }

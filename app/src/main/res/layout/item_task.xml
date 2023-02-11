@@ -7,68 +7,94 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="40dp"
     android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     android:layout_marginRight="40dp"
-    app:cardBackgroundColor="@color/space_cadet"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="12dp"
-        android:paddingVertical="12dp"
-        tools:ignore="UnusedAttribute"
-        >
+        android:paddingVertical="12dp">
 
 
         <CheckBox
             android:id="@+id/checkbox_completed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
             android:button="@drawable/ic_checkbox_circle"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:scaleX="1.0"
             android:scaleY="1.0"
-            app:layout_constraintBottom_toTopOf="@+id/priority"
-            app:layout_constraintEnd_toStartOf="@+id/textview_task_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
             />
 
         <TextView
             android:id="@+id/textview_task_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="PROVA"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/priority"
+            android:textColor="@color/blue_gray"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/checkbox_completed"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            tools:text="TASK TITLE" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circleImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/be_pro_duck_tive"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/text_view_description"
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingStart="12dp"
+            android:paddingEnd="0dp"
+            android:text="Questa e' una breve descrizione di un task. E' importante occupare due righe massimo. AAAAAAAAAAAAAAAA"
+            android:textColor="@color/nickel"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkbox_completed" />
+
+        <View
+            android:id="@+id/view_line"
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/priority"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_description" />
 
         <TextView
             android:id="@+id/priority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="12dp"
+            android:drawablePadding="4dp"
+            android:padding="4dp"
+            android:paddingStart="11dp"
             android:paddingEnd="0dp"
-            android:textColor="@color/white"
-            android:textSize="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/deadline"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkbox_completed"
-            app:layout_constraintVertical_bias="0.5"
-            tools:text="priority" />
+            tools:text="PRIORITY HIGH" />
 
         <TextView
             android:id="@+id/deadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
             android:drawablePadding="4dp"
             android:padding="4dp"
             android:paddingStart="11dp"
@@ -78,9 +104,7 @@
             app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
             app:drawableTint="@color/nickel"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/priority"
-            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="2020-05-06" />
 
 

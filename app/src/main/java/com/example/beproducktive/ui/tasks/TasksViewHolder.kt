@@ -1,10 +1,15 @@
 package com.example.beproducktive.ui.tasks
 
+import android.content.Context
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beproducktive.R
+import com.example.beproducktive.data.projectandtasks.ProjectAndTasks
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskPriority
 import com.example.beproducktive.databinding.ItemTaskBinding
@@ -17,25 +22,46 @@ class TasksViewHolder(
         binding.apply {
             checkboxCompleted.isChecked = task.completed
             textviewTaskTitle.text = task.taskTitle
-            setTaskPriority(task)
+            setTaskPriority(task, cardView)
             deadline.text = task.deadlineFormatted
         }
     }
 
-    private fun setTaskPriority(task: Task) {
+
+    private fun setTaskPriority(task: Task, cardView: CardView) {
         binding.apply {
             priority.text = itemView.context.resources.getString(
                 R.string.priority_value,
                 task.priority.name
             )
+            priority.setTypeface(null, Typeface.BOLD)
+
+            val colorArray = itemView.context.resources.getIntArray(R.array.colors)
 
             val textColor = when (task.priority) {
                 TaskPriority.HIGH -> R.color.red
-                TaskPriority.MEDIUM -> R.color.yellow
-                TaskPriority.LOW -> R.color.green
+                TaskPriority.MEDIUM -> R.color.green
+                TaskPriority.LOW -> R.color.resolution_blue
+            }
+            priority.setTextColor(ContextCompat.getColor(itemView.context, textColor))
+
+            val cardColor = when(task.priority)
+            {
+                TaskPriority.HIGH -> R.color.pale_pink
+                TaskPriority.MEDIUM -> R.color.light_goldenrod_yellow
+                TaskPriority.LOW -> R.color.water
             }
 
-            priority.setTextColor(ContextCompat.getColor(itemView.context, textColor))
+            val viewColor = when(task.priority)
+            {
+                TaskPriority.HIGH -> R.color.misty_rose
+                TaskPriority.MEDIUM -> R.color.fawn
+                TaskPriority.LOW -> R.color.baby_blue
+            }
+
+            viewLine.setBackgroundColor(ContextCompat.getColor(itemView.context, viewColor))
+
+            cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.context, cardColor))
         }
     }
 

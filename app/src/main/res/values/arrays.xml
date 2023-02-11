@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="colors">
+        <item>@color/pale_pink</item>
+        <item>@color/light_goldenrod_yellow</item>
+        <item>@color/light_blue</item>
+<!--        <item>@color/red</item>-->
+<!--        <item>@color/green</item>-->
+<!--        <item>@color/portland_orange</item>-->
+<!--        <item>@color/pastel_orange</item>-->
+<!--        <item>@color/light_salmon</item>-->
+<!--        <item>@color/coral</item>-->
+<!--        <item>@color/red_orange</item>-->
+<!--        <item>@color/orange</item>-->
+<!--        <item>@color/pink</item>-->
+<!--        <item>@color/hot_pink</item>-->
+<!--        <item>@color/deep_pink</item>-->
+<!--        <item>@color/pale_red_violet</item>-->
+<!--        <item>@color/medium_violet_red</item>-->
+<!--        <item>@color/fuchsia</item>-->
+<!--        <item>@color/yellow</item>-->
+<!--        <item>@color/gold</item>-->
+<!--        <item>@color/lemon_chiffon</item>-->
+<!--        <item>@color/cornsilk</item>-->
+<!--        <item>@color/papaya_whip</item>-->
+<!--   -->
+<!--        <item>@color/sky_blue</item>-->
+<!--        <item>@color/light_sky_blue</item>-->
+<!--        <item>@color/capri</item>-->
+<!--        <item>@color/dodger_blue</item>-->
+<!--        <item>@color/cornflower_blue</item>-->
+    </array>
+</resources>

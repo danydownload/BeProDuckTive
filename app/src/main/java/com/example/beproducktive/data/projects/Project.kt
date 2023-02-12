@@ -8,5 +8,5 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "project_table")
 @Parcelize
 data class Project(
-    @PrimaryKey() val projectName: String,
+     @PrimaryKey val projectName: String
 ) : Parcelable

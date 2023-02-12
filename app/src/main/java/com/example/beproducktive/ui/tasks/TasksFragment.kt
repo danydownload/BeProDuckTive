@@ -1,13 +1,13 @@
 package com.example.beproducktive.ui.tasks
 
-import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beproducktive.R
 import com.example.beproducktive.databinding.FragmentTasksBinding
@@ -23,7 +23,11 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
         val binding =  FragmentTasksBinding.bind(view)
 
-        val taskAdapter = TasksAdapter()
+        val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
+            Log.d("ONCLICK", "CLICKED TASK")
+            Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
+        })
+
 
         binding.apply {
             recyclerViewTasks.apply {
@@ -31,18 +35,30 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 layoutManager = LinearLayoutManager(requireContext())
                 setHasFixedSize(true)
             }
+
+            cardView.setOnClickListener {
+                viewModel.onclickProject(findNavController())
+            }
         }
 
-        viewModel.tasks.observe(viewLifecycleOwner) {
-            taskAdapter.submitList(it)
+        viewModel.tasks.observe(viewLifecycleOwner) { tasksList ->
+            taskAdapter.submitList(tasksList)
         }
 
-        viewModel.projects.observe(viewLifecycleOwner) {
+        viewModel.projects.observe(viewLifecycleOwner) { projectsList ->
             binding.apply {
-                buttonProject.text = "Project: ${it[0].projectName}"
+                textviewProjectName.text = "Project: ${projectsList[0].projectName}".uppercase()
                 fabAddTask.setColorFilter(ContextCompat.getColor(view.context, R.color.blue_gray));
             }
         }
+
+        val bundle = arguments
+        if (bundle == null) {
+            Log.e("Tasks", "TasksFragment did not receive project information")
+            return
+        }
+//        val args = TasksFragmentArgs.fromBundle(bundle)
+//        viewModel.onReceiveProject(args.project!!.projectName)
 
     }
 }

@@ -10,6 +10,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="40dp"
+            android:backgroundTint="@color/peach_puff"
+            app:cardCornerRadius="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textview_project_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textColor="@color/blue_gray"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/checkbox_completed"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Project: " />
+
+
+        </androidx.cardview.widget.CardView>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_tasks"
@@ -22,40 +51,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_task" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/text_view_project"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="98dp"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:layout_marginEnd="103dp"-->
-<!--            android:ems="10"-->
-<!--            tools:text="Project:"-->
-<!--            android:textColor="?attr/editTextColor"-->
-<!--            android:background="?attr/editTextBackground"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:textAppearance="?android:attr/textAppearanceMediumInverse"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-        <Button
-            android:id="@+id/button_project"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="40dp"
-            android:ellipsize="end"
-            android:ems="10"
-            android:maxLines="1"
-            android:textColor="@color/blue_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:backgroundTint="@color/peach_puff"
-            android:textAlignment="center"
-            tools:text="Project: " />
 
 
 

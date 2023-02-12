@@ -8,5 +8,23 @@
         android:id="@+id/tasksFragment"
         android:name="com.example.beproducktive.ui.tasks.TasksFragment"
         android:label="fragment_tasks"
-        tools:layout="@layout/fragment_tasks" />
+        tools:layout="@layout/fragment_tasks" >
+        <action
+            android:id="@+id/action_tasksFragment_to_projectsFragment"
+            app:destination="@id/projectsFragment" />
+        <argument
+            android:name="project"
+            app:argType="com.example.beproducktive.data.projects.Project"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectsFragment"
+        android:name="com.example.beproducktive.ui.projects.ProjectsFragment"
+        android:label="fragment_projects"
+        tools:layout="@layout/fragment_projects" >
+        <action
+            android:id="@+id/action_projectsFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment" />
+    </fragment>
 </navigation>

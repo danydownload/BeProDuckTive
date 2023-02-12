@@ -1,24 +1,27 @@
 package com.example.beproducktive.ui.tasks
 
 
-import android.content.Context
-import android.graphics.Color
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.example.beproducktive.R
 import com.example.beproducktive.data.tasks.Task
 
-class TasksAdapter() : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
+class TasksAdapter(private val onClickListener: OnClickListener) : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksViewHolder =
         TasksViewHolder.create(parent)
 
     override fun onBindViewHolder(holder: TasksViewHolder, position: Int) {
-
+        Log.d("PROJC-UP", "onBindViewHolder TASK")
         val currentItem = getItem(position)
-        if (currentItem != null)
-            holder.bind(currentItem)
+
+        holder.itemView.setOnClickListener {
+            Log.d("ONCLICK", "TASK SET ONCLICKED")
+            onClickListener.onClick(currentItem)
+        }
+
+        holder.bind(currentItem)
     }
 
     companion object {
@@ -30,5 +33,9 @@ class TasksAdapter() : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
                 oldItem == newItem
 
         }
+    }
+
+    class OnClickListener(val clickListener: (task: Task) -> Unit) {
+        fun onClick(task: Task) = clickListener(task)
     }
 }

@@ -1,6 +1,5 @@
 package com.example.beproducktive.ui.projects
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,11 +11,10 @@ class ProjectsAdapter(private val onClickListener: OnClickListener) : ListAdapte
         ProjectsViewHolder.create(parent)
 
     override fun onBindViewHolder(holder: ProjectsViewHolder, position: Int) {
-        Log.d("ONCLICK", "onBindViewHolder PROJECTS")
+//        Log.d("ONCLICK", "onBindViewHolder PROJECTS")
         val currentItem = getItem(position)
 
         holder.itemView.setOnClickListener {
-            Log.d("ONCLICK", "PROJECT SET ONCLICKED")
             onClickListener.onClick(currentItem)
         }
 

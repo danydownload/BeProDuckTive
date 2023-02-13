@@ -18,7 +18,7 @@ interface ProjectDao {
     @Delete
     suspend fun delete(project: Project)
 
-    /*
+/*
  * returns all instances of the data class that pairs the parent entity
  * and the child entity. This method requires Room to run two queries,
  * so add the @Transaction annotation to this method to ensure that
@@ -30,14 +30,6 @@ interface ProjectDao {
 
     @Transaction
     @Query("SELECT * FROM project_table WHERE projectName = :projectName")
-    fun getByProjectName(projectName: String) : Flow<List<ProjectAndTasks>>
-
-// TODO Make the query above general, like in those two examples below:
-//    @Transaction()
-//    @Query("SELECT * FROM Dog")
-//    suspend fun getAll(): List<DogWithOwner>
-//    @Transaction()
-//    @Query("SELECT * FROM Dog WHERE id=:id")
-//    suspend fun getById(id: Int): DogWithOwner
+    fun getByProjectName(projectName: String?) : Flow<List<ProjectAndTasks>>
 
 }

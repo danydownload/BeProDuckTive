@@ -24,7 +24,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
         val binding =  FragmentTasksBinding.bind(view)
 
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
-            Log.d("ONCLICK", "CLICKED TASK")
+//            Log.d("ONCLICK", "CLICKED TASK")
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
         })
 
@@ -41,8 +41,24 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
             }
         }
 
-        viewModel.tasks.observe(viewLifecycleOwner) { tasksList ->
-            taskAdapter.submitList(tasksList)
+        val bundle = arguments
+        if (bundle == null) {
+            Log.e("Tasks", "TasksFragment did not receive project information")
+            return
+        }
+
+        val args = TasksFragmentArgs.fromBundle(bundle)
+//        args.project?.let { Log.d("ONCLICK-R", it.projectName) }
+        if (args.project != null) {
+            val list = viewModel.onReceiveProject(args.project.projectName)
+            list.observe(viewLifecycleOwner) {
+                taskAdapter.submitList(it)
+            }
+        }
+        else {
+            viewModel.tasks.observe(viewLifecycleOwner) { tasksList ->
+                taskAdapter.submitList(tasksList)
+            }
         }
 
         viewModel.projects.observe(viewLifecycleOwner) { projectsList ->
@@ -52,13 +68,9 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
             }
         }
 
-        val bundle = arguments
-        if (bundle == null) {
-            Log.e("Tasks", "TasksFragment did not receive project information")
-            return
-        }
-//        val args = TasksFragmentArgs.fromBundle(bundle)
-//        viewModel.onReceiveProject(args.project!!.projectName)
+
+
+
 
     }
 }

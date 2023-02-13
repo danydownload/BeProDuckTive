@@ -3,7 +3,6 @@ package com.example.beproducktive.ui.projects
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import com.example.beproducktive.data.projects.Project
 import com.example.beproducktive.data.projects.ProjectDao

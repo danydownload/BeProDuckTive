@@ -1,6 +1,8 @@
 package com.example.beproducktive.ui.tasks
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.navigation.NavController
 import com.example.beproducktive.R
 import com.example.beproducktive.data.projects.Project
@@ -21,17 +23,16 @@ class TasksViewModel @Inject constructor(
         emit(project)
     }
 
-    val tasks : LiveData<List<Task>> = liveData {
-        val firstProject = projectDao.getProjects().first()[0].projectName
-        val task = projectDao.getByProjectName(firstProject).first()[0]
-        emit(task.tasks)
+    val tasks: LiveData<List<Task>> = liveData {
+        val firstProject = projectDao.getProjects().first()[0]
+        val proj = projectDao.getByProjectName(firstProject.projectName).first()[0]
+        emit(proj.tasks)
     }
 
-    private fun emitTasksByProjectName(projectName: String) {
-        val tasks : LiveData<List<Task>> = liveData {
-            val task = projectDao.getByProjectName(projectName).first()[0]
-            emit(task.tasks)
-        }
+
+    private fun emitTasksByProjectName(projectName: String) = liveData {
+        val proj = projectDao.getByProjectName(projectName).first()[0]
+        emit(proj.tasks)
     }
 
     fun onclickProject(findNavController: NavController) {

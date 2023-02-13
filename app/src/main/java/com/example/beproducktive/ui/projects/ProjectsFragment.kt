@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beproducktive.R
-import com.example.beproducktive.data.projects.Project
 import com.example.beproducktive.databinding.FragmentProjectsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,10 +23,12 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
         val binding = FragmentProjectsBinding.bind(view)
 
         val projectAdapter = ProjectsAdapter(ProjectsAdapter.OnClickListener {project ->
-            Log.d("ONCLICK", "CLICKED PROJECT")
+//            Log.d("ONCLICK", "CLICKED PROJECT")
             Toast.makeText(requireContext(), project.projectName, Toast.LENGTH_SHORT).show()
+//            findNavController().navigate(R.id.action_projectsFragment_to_tasksFragment)
+            findNavController().navigate(ProjectsFragmentDirections.actionProjectsFragmentToTasksFragment(project))
         })
-//            findNavController().navigate(project, R.id.action_projectsFragment_to_tasksFragment)
+
 
         binding.apply {
             recyclerViewProjects.apply {

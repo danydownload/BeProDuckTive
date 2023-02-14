@@ -17,6 +17,9 @@
             app:argType="com.example.beproducktive.data.projects.Project"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_tasksFragment_to_addEditFragment"
+            app:destination="@id/addEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/projectsFragment"
@@ -26,5 +29,24 @@
         <action
             android:id="@+id/action_projectsFragment_to_tasksFragment"
             app:destination="@id/tasksFragment" />
+        <action
+            android:id="@+id/action_projectsFragment_to_addEditFragment"
+            app:destination="@id/addEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEditFragment"
+        android:name="com.example.beproducktive.ui.addedittasks.AddEditFragment"
+        android:label="fragment_add_edit"
+        tools:layout="@layout/fragment_add_edit" >
+        <argument
+            android:name="task"
+            app:argType="com.example.beproducktive.data.tasks.Task"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="project"
+            app:argType="com.example.beproducktive.data.projects.Project"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

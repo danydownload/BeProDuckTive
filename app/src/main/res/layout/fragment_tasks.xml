@@ -30,7 +30,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="2"
-                android:textColor="@color/blue_gray"
+                android:textColor="@color/purple_700"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/checkbox_completed"
                 app:layout_constraintTop_toTopOf="parent"
@@ -64,10 +64,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
-        app:tint="@color/white"
         android:contentDescription="Add"
         app:backgroundTint="@color/peach_puff"
-        android:tint="@color/blue_gray"
+        app:tint="@color/blue_gray"
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

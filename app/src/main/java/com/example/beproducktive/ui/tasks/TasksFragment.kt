@@ -26,6 +26,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
 //            Log.d("ONCLICK", "CLICKED TASK")
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_tasksFragment_to_addEditFragment)
         })
 
 
@@ -38,6 +39,10 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
             cardView.setOnClickListener {
                 viewModel.onclickProject(findNavController())
+            }
+
+            fabAddTask.setOnClickListener {
+                findNavController().navigate(R.id.action_tasksFragment_to_addEditFragment)
             }
         }
 

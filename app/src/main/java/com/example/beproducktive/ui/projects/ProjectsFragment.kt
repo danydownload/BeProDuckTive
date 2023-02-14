@@ -37,6 +37,10 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
                 setHasFixedSize(true)
             }
 
+            buttonNewProject.setOnClickListener {
+                findNavController().navigate(R.id.action_projectsFragment_to_addEditFragment)
+            }
+
         }
 
         viewModel.projects.observe(viewLifecycleOwner) { projectsList ->

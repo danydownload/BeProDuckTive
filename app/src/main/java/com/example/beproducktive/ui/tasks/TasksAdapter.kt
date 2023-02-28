@@ -1,6 +1,7 @@
 package com.example.beproducktive.ui.tasks
 
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,7 +13,6 @@ class TasksAdapter(private val onClickListener: OnClickListener) : ListAdapter<T
         TasksViewHolder.create(parent)
 
     override fun onBindViewHolder(holder: TasksViewHolder, position: Int) {
-//        Log.d("PROJC-UP", "onBindViewHolder TASK")
         val currentItem = getItem(position)
 
         holder.itemView.setOnClickListener {

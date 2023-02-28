@@ -1,6 +1,8 @@
 package com.example.beproducktive.ui.projects
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -25,8 +27,8 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
         val projectAdapter = ProjectsAdapter(ProjectsAdapter.OnClickListener {project ->
 //            Log.d("ONCLICK", "CLICKED PROJECT")
             Toast.makeText(requireContext(), project.projectName, Toast.LENGTH_SHORT).show()
-//            findNavController().navigate(R.id.action_projectsFragment_to_tasksFragment)
             findNavController().navigate(ProjectsFragmentDirections.actionProjectsFragmentToTasksFragment(project))
+
         })
 
 
@@ -38,7 +40,7 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
             }
 
             buttonNewProject.setOnClickListener {
-                findNavController().navigate(R.id.action_projectsFragment_to_addEditFragment)
+//                findNavController().navigate(R.id.action_projectsFragment_to_addEditFragment)
             }
 
         }

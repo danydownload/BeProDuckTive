@@ -129,6 +129,8 @@
                 android:text="HIGH"
                 android:textColor="@color/red"
                 android:textSize="16sp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 app:cardCornerRadius="10dp"
                 app:layout_constraintEnd_toStartOf="@+id/button_priority_medium"
                 app:layout_constraintStart_toStartOf="parent"
@@ -271,18 +273,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_view_image" />
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="500dp"
-                app:cardBackgroundColor="@color/blue_gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/circleImageView" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_task"

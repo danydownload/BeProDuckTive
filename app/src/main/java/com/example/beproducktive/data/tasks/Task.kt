@@ -24,6 +24,7 @@ data class Task(
     val priority: TaskPriority,
     val belongsToProject: String,
     val deadline: Date? = Date(),
+    val description: String? = null,
     @PrimaryKey(autoGenerate = true) val taskId: Int = 0
 ) : Parcelable {
     val deadlineFormatted: String

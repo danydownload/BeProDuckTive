@@ -30,6 +30,8 @@ interface ProjectDao {
 
     @Transaction
     @Query("SELECT * FROM project_table WHERE projectName = :projectName")
-    fun getByProjectName(projectName: String?) : Flow<List<ProjectAndTasks>>
+    fun getByProjectName(projectName: String?) : Flow<ProjectAndTasks>
+
+
 
 }

@@ -26,6 +26,7 @@ class TasksViewHolder(
             textviewTaskTitle.text = task.taskTitle
             setTaskPriority(task, cardView)
             deadline.text = task.deadlineFormatted
+            textViewDescription.text = task.description
             
         }
     }

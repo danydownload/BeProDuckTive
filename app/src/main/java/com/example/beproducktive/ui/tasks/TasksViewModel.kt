@@ -5,13 +5,10 @@ import androidx.lifecycle.*
 import androidx.navigation.NavController
 import com.example.beproducktive.R
 import com.example.beproducktive.data.projectandtasks.ProjectAndTasks
-import com.example.beproducktive.data.projects.Project
 import com.example.beproducktive.data.projects.ProjectDao
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskDao
-import com.example.beproducktive.data.tasks.TaskPriority
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,7 +48,6 @@ class TasksViewModel @Inject constructor(
                 Log.e("Project", firstProject.projectName)
 
                 projectDao.getByProjectName(firstProject.projectName).collect {
-
                     emit(tasksOrderedByPriority(it))
                 }
             }
@@ -60,42 +56,22 @@ class TasksViewModel @Inject constructor(
 
 
 
-
     private fun emitTasksByProjectName(projectName: String) = liveData {
         projectDao.getByProjectName(projectName).collect {
             emit(tasksOrderedByPriority(it))
+            // emit(tasksOrderedByDeadline(it))
+            // emit(hideTasksCompleted(it)) //TODO: fix order to work also when app is started
         }
     }
 
+    fun tasksOrderedByPriority(projectAndTasks: ProjectAndTasks): List<Task> =
+        projectAndTasks.tasks.sortedByDescending { it.priority }
 
-    fun tasksOrderedByPriority(it: ProjectAndTasks) : List<Task> {
-        val tasksPriorityHigh: MutableList<Task> = mutableListOf();
-        val tasksPriorityMedium: MutableList<Task> = mutableListOf();
-        val tasksPriorityLow: MutableList<Task> = mutableListOf();
+    fun tasksOrderedByDeadline(projectAndTasks: ProjectAndTasks): List<Task> =
+        projectAndTasks.tasks.sortedBy { it.deadline }
 
-        for (singleTask in it.tasks) {
-            if (singleTask.priority == TaskPriority.HIGH)
-                tasksPriorityHigh.add(singleTask)
-            else if (singleTask.priority == TaskPriority.MEDIUM)
-                tasksPriorityMedium.add(singleTask)
-            else
-                tasksPriorityLow.add(singleTask)
-        }
-
-        val tasksOrderedByPriority: MutableList<Task> = mutableListOf();
-        tasksOrderedByPriority.addAll(tasksPriorityHigh)
-        tasksOrderedByPriority.addAll(tasksPriorityMedium)
-        tasksOrderedByPriority.addAll(tasksPriorityLow)
-
-        val tasksList = buildList<Task> {
-            addAll(tasksOrderedByPriority)
-        }
-
-        return tasksList
-    }
-
-
-
+    fun hideTasksCompleted(projectAndTasks: ProjectAndTasks): List<Task> =
+        projectAndTasks.tasks.filter { !it.completed }
 
     fun onclickProject(findNavController: NavController) {
         findNavController.navigate(R.id.action_tasksFragment_to_projectsFragment)

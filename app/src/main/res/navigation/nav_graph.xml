@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/tasksFragment">
+    app:startDestination="@id/dailyViewTasksFragment">
     <fragment
         android:id="@+id/tasksFragment"
         android:name="com.example.beproducktive.ui.tasks.TasksFragment"
@@ -47,4 +47,8 @@
             android:name="projectName"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/dailyViewTasksFragment"
+        android:name="com.example.beproducktive.ui.dailyviewtasks.DailyViewTasksFragment"
+        android:label="DailyViewTasksFragment" />
 </navigation>

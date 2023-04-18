@@ -71,31 +71,22 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                     calendar.isSelected = true
                     mAdapter.selectedPosition = calendarList.indexOf(calendar)
 
-                    Toast.makeText(
-                        requireContext(),
-                        "${calendar.getSelectedDate()} is selected!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    // when the user clicks on a date, the tasks for that date are displayed
-//                    viewModel.getTasksForDate(calendar.getDate())
-//                    viewModel.tasksForDate.observe(viewLifecycleOwner, {
-//                        taskAdapter.submitList(it)
-//                    })
-
                     val childTextView = view.findViewById<TextView>(R.id.date_1)
                     val startRotateAnimation: Animation =
                         AnimationUtils.makeInChildBottomAnimation(requireContext())
                     childTextView.startAnimation(startRotateAnimation)
                     childTextView.setTextColor(Color.CYAN)
 
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "${calendar.getDay()} is selected!",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "${calendar.getSelectedDate()} is selected!",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                     mAdapter.notifyItemChanged(calendarList.indexOf(calendar))
+
+                    var dateSelected = calendar.getSelectedDate()
+                    Log.d("SELECTED-DATE","$dateSelected is selected!")
 
                     // when a day is selected, all the other are unselected
                     for (i in calendarList.indices) {
@@ -105,6 +96,10 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                         }
                     }
 
+                    // when a day is selected, the tasks for that day are displayed
+                    viewModel.getTasksForDate(dateSelected).observe(viewLifecycleOwner, { task ->
+                        taskAdapter.submitList(task)
+                    })
 
                 }
 

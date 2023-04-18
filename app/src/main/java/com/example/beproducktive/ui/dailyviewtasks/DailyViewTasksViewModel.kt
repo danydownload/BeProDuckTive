@@ -19,4 +19,7 @@ class DailyViewTasksViewModel @Inject constructor (
 
     val tasks = taskDao.getTasks().asLiveData()
 
+
+    fun getTasksForDate(date: String?) = taskDao.getTasksByDeadline(date!!).asLiveData()
+
     }

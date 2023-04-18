@@ -19,7 +19,7 @@ import javax.inject.Provider
 
 //@Database(entities = [Project::class, Task::class], version = 3,  exportSchema = false)
 @Database(entities = [Project::class, Task::class],
-    version = 4, exportSchema = false)
+    version = 6, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class TaskDatabase : RoomDatabase() {
 
@@ -53,14 +53,14 @@ abstract class TaskDatabase : RoomDatabase() {
                     true,
                     TaskPriority.LOW,
                     "Other Things",
-                    SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).parse("10-02-2023")
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).parse("19-04-2023")
                 )
                 val task4 = Task(
                     "Finish report",
                     false,
                     TaskPriority.LOW,
                     "Personal",
-                    SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).parse("27-03-2023")
+                    SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).parse("22-04-2023")
                 )
                 val task5 = Task("Meet with client", true, TaskPriority.MEDIUM, "Personal", description = "American diner at 9.00pm")
                 val task6 = Task("Attend workshop", false, TaskPriority.HIGH, "Personal", description = "Argument: AI, ML and DL")

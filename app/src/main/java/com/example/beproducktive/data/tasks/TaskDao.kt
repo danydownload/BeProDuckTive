@@ -22,5 +22,8 @@ interface TaskDao {
     @Delete
     suspend fun delete(task: Task)
 
+    @Query("SELECT * FROM task_table WHERE deadline = :deadlineString")
+    fun getTasksByDeadline(deadlineString: String): Flow<List<Task>>
+
 
 }

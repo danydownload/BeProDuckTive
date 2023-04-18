@@ -1,5 +1,6 @@
 package com.example.beproducktive.data.calendar
 
+import com.example.beproducktive.utils.Converters
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -81,31 +82,35 @@ class MyCalendar {
         return String.format("%02d-%02d-%04d", day, month, year)
     }
 
+    // -1 is because the month is 0 indexed
     private fun getMonthInt(monthName: String): Int {
         return when (monthName.lowercase(Locale.ROOT)) {
-            "jan" -> 1
-            "feb" -> 2
-            "mar" -> 3
-            "apr" -> 4
-            "may" -> 5
-            "jun" -> 6
-            "jul" -> 7
-            "aug" -> 8
-            "sep" -> 9
-            "oct" -> 10
-            "nov" -> 11
-            "dec" -> 12
+            "jan", "gen" -> 1 - 1
+            "feb", "feb" -> 2 - 1
+            "mar", "mar" -> 3 - 1
+            "apr", "apr" -> 4 - 1
+            "may", "mag" -> 5 - 1
+            "jun", "giu" -> 6 - 1
+            "jul", "lug" -> 7 - 1
+            "aug", "ago" -> 8 - 1
+            "sep", "set" -> 9 - 1
+            "oct", "ott" -> 10 - 1
+            "nov", "nov" -> 11 - 1
+            "dec", "dic" -> 12 - 1
             else -> throw IllegalArgumentException("Invalid month name: $monthName")
         }
     }
 
 
 
-    fun getSelectedDate(): String {
+    fun getSelectedDate(): String? {
         val calendar = Calendar.getInstance()
+        println("MONTH: $month) --> ${getMonthInt(month!!)}")
         calendar.set(year?.toInt() ?: 0, getMonthInt(month!!), date?.toInt() ?: 0)
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy")
-        return dateFormat.format(calendar.time)
+        println("calendar.time: ${calendar.time}")
+        val dateFormat = Converters().fromDate(calendar.time)
+        println("DATE: $dateFormat")
+        return dateFormat
     }
 
 

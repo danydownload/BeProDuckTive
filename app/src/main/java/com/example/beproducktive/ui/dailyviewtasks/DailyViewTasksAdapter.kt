@@ -73,29 +73,29 @@ class CalendarAdapter(
     override fun onBindViewHolder(holder: CalendarAdapter.MyViewHolder, position: Int) {
         val calendar: MyCalendar = mCalendar[position]
 
-        holder.tb_day.text = calendar.getDay()
-        holder.tb_date.text = calendar.getDate()
+        holder.tb_day.text = calendar.day
+        holder.tb_date.text = calendar.date
 
         if (calendar.isSelected) {
             holder.tb_date.setTextColor(Color.CYAN)
 
-            if (holder.tb_day.text == "dom" || calendar.getDay() == "sun") {
+            if (holder.tb_day.text == "dom" || calendar.day == "sun") {
                 holder.tb_day.setTextColor(Color.RED)
             } else {
                 holder.tb_day.setTextColor(Color.BLACK)
             }
 
-//            Log.d("Calendar", "[OBVH] ${calendar.getDate()} is selected!")
+//            Log.d("Calendar", "[OBVH] ${calendar.date} is selected!")
         } else {
             holder.tb_date.setTextColor(Color.BLACK)
 
-            if (holder.tb_day.text == "dom" || calendar.getDay() == "sun") {
+            if (holder.tb_day.text == "dom" || calendar.day == "sun") {
                 holder.tb_day.setTextColor(Color.RED)
             } else {
                 holder.tb_day.setTextColor(Color.BLACK)
 
                 val day = calendar.getCurrentDate().split("-")[0]
-                if (day == calendar.getDate()) {
+                if (day == calendar.date) {
                     holder.tb_date.setTextColor(Color.GREEN)
                 }
             }

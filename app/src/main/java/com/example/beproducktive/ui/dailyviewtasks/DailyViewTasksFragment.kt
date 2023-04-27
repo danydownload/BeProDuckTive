@@ -28,6 +28,8 @@ import com.example.beproducktive.databinding.FragmentDailyViewTasksBinding
 import com.example.beproducktive.ui.tasks.TasksAdapter
 import com.example.beproducktive.ui.tasks.TasksFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
@@ -97,9 +99,9 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                     }
 
                     // when a day is selected, the tasks for that day are displayed
-                    viewModel.getTasksForDate(dateSelected).observe(viewLifecycleOwner, { task ->
+                    viewModel.getTasksForDate(dateSelected).observe(viewLifecycleOwner) { task ->
                         taskAdapter.submitList(task)
-                    })
+                    }
 
                 }
 
@@ -173,9 +175,16 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
             }
 
+//            fabAddTask.setOnClickListener {
+//                findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment())
+//            }
 
+            // create an instance of MyCalendar and call getCurrentDate method
+            val calendar = MyCalendar()
+            val currentDate = calendar.getCurrentDate()
+            println("Current date: $currentDate")
 
-            viewModel.tasks.observe(viewLifecycleOwner) { tasksList ->
+            viewModel.getTasksForDate(currentDate).observe(viewLifecycleOwner) { tasksList ->
                 taskAdapter.submitList(tasksList)
             }
 

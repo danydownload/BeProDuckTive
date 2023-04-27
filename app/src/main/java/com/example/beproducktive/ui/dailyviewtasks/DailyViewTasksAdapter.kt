@@ -76,12 +76,6 @@ class CalendarAdapter(
         holder.tb_day.text = calendar.getDay()
         holder.tb_date.text = calendar.getDate()
 
-
-        // TODO - change the color of the day if it's today and create the method isToday
-//            if (calendar.isToday) {
-//                holder.tb_date.setTextColor(Color.RED)
-//            }
-
         if (calendar.isSelected) {
             holder.tb_date.setTextColor(Color.CYAN)
 
@@ -99,9 +93,20 @@ class CalendarAdapter(
                 holder.tb_day.setTextColor(Color.RED)
             } else {
                 holder.tb_day.setTextColor(Color.BLACK)
+
+                val day = calendar.getCurrentDate().split("-")[0]
+                if (day == calendar.getDate()) {
+                    holder.tb_date.setTextColor(Color.GREEN)
+                }
             }
 
+
         }
+
+
+
+
+
 
 
     }

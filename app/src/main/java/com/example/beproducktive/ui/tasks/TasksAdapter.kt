@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.beproducktive.data.tasks.Task
 
-class TasksAdapter(private val onClickListener: OnClickListener) : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
+class TasksAdapter(
+    private val onClickListener: OnClickListener
+) : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksViewHolder =
         TasksViewHolder.create(parent)

@@ -25,7 +25,13 @@ class TasksViewModel @Inject constructor(
 
 //
 
+
     val projects = projectDao.getProjects().asLiveData()
+
+
+    val allTasks = taskDao.getTasks().asLiveData()
+
+    fun getTasksForDate(date: String?) = taskDao.getTasksByDeadline(date!!).asLiveData()
 
 
 //    val tasks: LiveData<List<Task>> = liveData {

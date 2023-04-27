@@ -9,17 +9,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-@HiltViewModel
-class DailyViewTasksViewModel @Inject constructor(
-    private val taskDao: TaskDao
-) : ViewModel() {
-
-    val tasks = taskDao.getTasks().asLiveData()
-
-    fun getTasksForDate(date: String?) = taskDao.getTasksByDeadline(date!!).asLiveData()
-
-
-}
+//@HiltViewModel
+//class DailyViewTasksViewModel @Inject constructor(
+//    private val taskDao: TaskDao
+//) : ViewModel() {
+//
+//    val tasks = taskDao.getTasks().asLiveData()
+//
+//    fun getTasksForDate(date: String?) = taskDao.getTasksByDeadline(date!!).asLiveData()
+//
+//
+//}
 
 
 //    fun getTasksForDate(date: String?) = taskDao.getTasksForDate(date).asLiveData()

@@ -27,6 +27,7 @@ import com.example.beproducktive.data.calendar.MyCalendarData
 import com.example.beproducktive.databinding.FragmentDailyViewTasksBinding
 import com.example.beproducktive.ui.tasks.TasksAdapter
 import com.example.beproducktive.ui.tasks.TasksFragmentDirections
+import com.example.beproducktive.ui.tasks.TasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import kotlin.collections.ArrayList
@@ -34,10 +35,10 @@ import kotlin.collections.ArrayList
 @AndroidEntryPoint
 class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
-    private val viewModel: DailyViewTasksViewModel by viewModels()
+    private val viewModel: TasksViewModel by viewModels()
 
     private var calendarList = ArrayList<MyCalendar>()
-    private lateinit var mAdapter: CalendarAdapter
+    private lateinit var mAdapter: DailyViewTasksAdapter
     private lateinit var forward: ImageView
     private lateinit var reverse: ImageView
     private var currentPosition = 0
@@ -68,47 +69,45 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             reverse = reverseIm
 
 
-            mAdapter = CalendarAdapter(calendarList, object : CalendarAdapter.OnItemClickListener {
-                override fun onItemClick(view: View, calendar: MyCalendar) {
-                    calendar.isSelected = true
-                    mAdapter.selectedPosition = calendarList.indexOf(calendar)
+            mAdapter = DailyViewTasksAdapter(DailyViewTasksAdapter.OnClickListener { calendar ->
 
-                    val childTextView = view.findViewById<TextView>(R.id.date_1)
-                    val startRotateAnimation: Animation =
-                        AnimationUtils.makeInChildBottomAnimation(requireContext())
-                    childTextView.startAnimation(startRotateAnimation)
-                    childTextView.setTextColor(Color.CYAN)
+                Log.d("CLICKED-DATE", "${calendar.getSelectedDate()} is clicked!")
+                Log.d("CLICKED-DATE", "calendarList: ${calendarList}")
 
-                    Toast.makeText(
-                        requireContext(),
-                        "${calendar.getSelectedDate()} is selected!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                calendar.isSelected = true
 
-                    mAdapter.notifyItemChanged(calendarList.indexOf(calendar))
+                val childTextView = view.findViewById<TextView>(R.id.date_1)
+                val startRotateAnimation: Animation =
+                    AnimationUtils.makeInChildBottomAnimation(requireContext())
+                childTextView.startAnimation(startRotateAnimation)
+                childTextView.setTextColor(Color.CYAN)
 
-                    var dateSelected = calendar.getSelectedDate()
-                    Log.d("SELECTED-DATE","$dateSelected is selected!")
+                Toast.makeText(
+                    requireContext(),
+                    "${calendar.getSelectedDate()} is selected!",
+                    Toast.LENGTH_SHORT
+                ).show()
 
-                    // when a day is selected, all the other are unselected
-                    for (i in calendarList.indices) {
-                        if (i != calendarList.indexOf(calendar)) {
-                            calendarList[i].isSelected = false
-                            mAdapter.notifyItemChanged(i)
-                        }
+                mAdapter.notifyItemChanged(calendarList.indexOf(calendar))
+
+                val dateSelected = calendar.getSelectedDate()
+                Log.d("SELECTED-DATE","$dateSelected is selected!")
+
+                // when a day is selected, all the other are unselected
+                for (i in calendarList.indices) {
+                    if (i != calendarList.indexOf(calendar)) {
+                        calendarList[i].isSelected = false
+                        mAdapter.notifyItemChanged(i)
                     }
-
-                    // when a day is selected, the tasks for that day are displayed
-                    viewModel.getTasksForDate(dateSelected).observe(viewLifecycleOwner) { task ->
-                        taskAdapter.submitList(task)
-                    }
-
                 }
 
-                override fun onItemLongClick(view: View, calendar: MyCalendar) {
-
-//                    Toast.makeText(requireContext(), "${calendar.getCurrentDate()} selected!", Toast.LENGTH_SHORT).show()
+                // when a day is selected, the tasks for that day are displayed
+                viewModel.getTasksForDate(dateSelected).observe(viewLifecycleOwner) { task ->
+                    taskAdapter.submitList(task)
                 }
+
+
+
             })
 
 
@@ -171,7 +170,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
 
                 prepareCalendarData()
-
+                mAdapter.submitList(calendarList)
 
             }
 
@@ -226,7 +225,10 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             mCalendar.getNextWeekDay(1)
 
             calendarList.add(calendar)
+
         }
+
+        Log.d("CALENDAR-SIZE", "Size of calendarList: ${calendarList.size}")
 
         // notify adapter about data set changes
         // so that it will render the list with new data

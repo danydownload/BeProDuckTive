@@ -22,7 +22,7 @@ interface TaskDao {
     @Delete
     suspend fun delete(task: Task)
 
-    @Query("SELECT * FROM task_table WHERE deadline = :deadlineString")
+    @Query("SELECT * FROM task_table WHERE deadline = :deadlineString ORDER BY CASE priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 END ASC")
     fun getTasksByDeadline(deadlineString: String): Flow<List<Task>>
 
 

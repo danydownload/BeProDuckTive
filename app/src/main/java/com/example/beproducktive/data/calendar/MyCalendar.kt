@@ -4,29 +4,14 @@ import com.example.beproducktive.utils.Converters
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MyCalendar {
-    // storing day - like Sun, Wed etc..,
-    // date like 1, 2 etc..
-    //Month 1..12
-    // year .. 2019.. beyond
-
-    private var day: String? = null
-    private var date: String? = null
-    private var month: String? = null
-    private var year: String? = null
-    private var pos = 0
-    var isSelected = false
-
-
-    constructor() {}
-
-    constructor(day: String?, date: String?, month: String?, year: String?, i: Int) {
-        this.day = day
-        this.date = date
-        this.month = getMonthStr(month)
-        this.year = year
-        this.pos = i
-    }
+data class MyCalendar(
+    var day: String? = null,
+    var date: String? = null,
+    var month: String? = null,
+    var year: String? = null,
+    var pos: Int = 0,
+    var isSelected: Boolean = false
+) {
 
     private fun getMonthStr(month: String?): String? {
         val cal = Calendar.getInstance()
@@ -35,43 +20,6 @@ class MyCalendar {
         cal[Calendar.MONTH] = monthnum ?: 0
         val month_name = month_date.format(cal.time)
         return month_name
-    }
-
-
-    fun getPos(): Int {
-        return pos
-    }
-
-    fun getDay(): String? {
-        return day
-    }
-
-    fun setDay(day: String?) {
-        this.day = day
-    }
-
-    fun getDate(): String? {
-        return date
-    }
-
-    fun setDate(date: String?) {
-        this.date = date
-    }
-
-    fun setMonth(month: String?) {
-        this.month = month
-    }
-
-    fun getMonth(): String? {
-        return month
-    }
-
-    fun getYear(): String? {
-        return year
-    }
-
-    fun setYear(year: String?) {
-        this.year = year
     }
 
     fun getCurrentDate(): String {
@@ -97,11 +45,10 @@ class MyCalendar {
             "oct", "ott" -> 10 - 1
             "nov", "nov" -> 11 - 1
             "dec", "dic" -> 12 - 1
-            else -> throw IllegalArgumentException("Invalid month name: $monthName")
+            // if the month name is already an int 0-12 indexed then just return it as is. Otherwise throw an exception
+            else -> monthName.toIntOrNull() ?: throw Exception("Invalid month name: $monthName")
         }
     }
-
-
 
     fun getSelectedDate(): String? {
         val calendar = Calendar.getInstance()
@@ -112,6 +59,4 @@ class MyCalendar {
         println("DATE: $dateFormat")
         return dateFormat
     }
-
-
 }

@@ -3,7 +3,7 @@ package com.example.beproducktive.data.calendar
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
-class MyCalendarData(private var startday: Int) {
+data class MyCalendarData(private var startday: Int) {
     private var currentmonth: Int = 0
     private var currentyear: Int = 0
     private var dayofweek: Int = 0

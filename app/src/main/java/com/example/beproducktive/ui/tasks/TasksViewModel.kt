@@ -6,54 +6,39 @@ import androidx.navigation.NavController
 import com.example.beproducktive.R
 import com.example.beproducktive.data.projectandtasks.ProjectAndTasks
 import com.example.beproducktive.data.projects.ProjectDao
+import com.example.beproducktive.data.projects.ProjectRepository
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskDao
+import com.example.beproducktive.data.tasks.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    private val taskDao: TaskDao,
-    private val projectDao: ProjectDao
+    private val taskRepository: TaskRepository,
+    private val projectRepository: ProjectRepository
 ) : ViewModel() {
 
-//    val projects: LiveData<List<Project>> = liveData {
-//        var project = projectDao.getProjects().first()
-//        emit(project)
-//    }
-//
 
-//
+    val projects = projectRepository.getProjects().asLiveData()
 
 
-    val projects = projectDao.getProjects().asLiveData()
+    val allTasks = taskRepository.getTasks().asLiveData()
 
+    fun getTasksForDate(date: String?) = taskRepository.getTasksByDeadline(date!!).asLiveData()
 
-    val allTasks = taskDao.getTasks().asLiveData()
+    fun getProjectNameForTask(taskId: Int) = taskRepository.getProjectNameForTask(taskId).asLiveData()
 
-    fun getTasksForDate(date: String?) = taskDao.getTasksByDeadline(date!!).asLiveData()
-
-
-//    val tasks: LiveData<List<Task>> = liveData {
-////        val firstProject = projectDao.getProjects().first()[0]
-//        val firstProject = projectDao.getProjects().collect({
-//            val nameProj = it[0].projectName
-//        })
-//
-//
-//        Log.e("Project", firstProject.projectName)
-//        val proj = projectDao.getByProjectName(firstProject.projectName).first()[0]
-//        emit(proj.tasks)
-//    }
 
     val tasks: LiveData<List<Task>> = liveData {
-        projectDao.getProjects().collect {
+        projectRepository.getProjects().collect {
             if (it.isNotEmpty()) {
 
                 val firstProject = it[0]
                 Log.e("Project", firstProject.projectName)
 
-                projectDao.getByProjectName(firstProject.projectName).collect {
+                projectRepository.getByProjectName(firstProject.projectName).collect {
                     emit(tasksOrderedByPriority(it))
                 }
             }
@@ -61,12 +46,9 @@ class TasksViewModel @Inject constructor(
     }
 
 
-
     private fun emitTasksByProjectName(projectName: String) = liveData {
-        projectDao.getByProjectName(projectName).collect {
+        projectRepository.getByProjectName(projectName).collect {
             emit(tasksOrderedByPriority(it))
-            // emit(tasksOrderedByDeadline(it))
-            // emit(hideTasksCompleted(it)) //TODO: fix order to work also when app is started
         }
     }
 

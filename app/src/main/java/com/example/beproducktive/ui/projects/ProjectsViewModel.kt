@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.beproducktive.data.projects.Project
 import com.example.beproducktive.data.projects.ProjectDao
+import com.example.beproducktive.data.projects.ProjectRepository
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskDao
 import com.example.beproducktive.data.tasks.TaskPriority
@@ -16,21 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProjectsViewModel @Inject constructor(
-    private val projectDao: ProjectDao
+    private val projectRepository: ProjectRepository
 ) : ViewModel() {
 
-
-//    val projects: LiveData<List<Project>> = liveData {
-//        val project = projectDao.getProjects().first()
-//
-//        for (p in project) {
-//            Log.d("PROJC-UP", p.projectName)
-//        }
-//
-//        emit(project)
-//    }
-
-    val projects = projectDao.getProjects().asLiveData()
+    val projects = projectRepository.getProjects().asLiveData()
 
 
 }

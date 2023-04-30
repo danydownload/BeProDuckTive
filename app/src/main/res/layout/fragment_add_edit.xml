@@ -19,15 +19,14 @@
                 android:id="@+id/text_view_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:layout_marginTop="20dp"
                 android:text="Task Title"
+                android:textColor="@color/purple_500"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:textColor="@color/purple_500"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_view_title"
@@ -50,12 +49,13 @@
                     android:layout_marginStart="10dp"
                     android:background="@null"
                     android:ellipsize="end"
-                    android:gravity="start|center_vertical"
+                    android:gravity="center"
                     android:maxLines="1"
                     android:text="Task Title"
                     android:textSize="16sp"
                     android:inputType="textMultiLine"
                     android:textColor="@color/blue_gray"
+                    android:maxLength="36"
                     />
 
 
@@ -67,14 +67,14 @@
                 android:id="@+id/text_view_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:layout_marginTop="20dp"
                 android:text="Task Description"
+                android:textColor="@color/purple_500"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_view_title"
-                android:textColor="@color/purple_500"/>
+                app:layout_constraintTop_toBottomOf="@id/card_view_title" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_view_description"
@@ -97,11 +97,15 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="3dp"
                     android:background="@null"
-                    android:gravity="start"
+                    android:gravity="center|top"
                     android:inputType="textMultiLine"
-                    android:text="Task Title AAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAAAAAAAAA AAAAAAAAAAAAAAAA aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    android:text="Task Description"
                     android:textSize="16sp"
-                    android:textColor="@color/blue_gray" />
+                    android:textColor="@color/blue_gray"
+                    android:ellipsize="end"
+                    android:maxLength="194"
+                />
+
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -117,69 +121,46 @@
                 app:layout_constraintTop_toBottomOf="@id/card_view_description"
                 android:textColor="@color/purple_500"/>
 
-            <Button
-                android:id="@+id/button_priority_high"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view_priority"
                 android:layout_width="105dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:backgroundTint="@color/pale_pink"
-                android:gravity="center"
-                android:text="HIGH"
-                android:textColor="@color/red"
-                android:textSize="16sp"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
+                android:backgroundTint="@color/peach_puff"
                 app:cardCornerRadius="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/button_priority_medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_priority">
+
+            <Spinner
+                android:id="@+id/spinner_task_priority"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:backgroundTint="@color/light_goldenrod_yellow"
+                android:gravity="center|top"
+                android:textSize="16sp"
+                android:textColor="@color/blue_gray"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_view_priority" />
 
-            <Button
-                android:id="@+id/button_priority_medium"
-                android:layout_width="105dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="5dp"
-                android:backgroundTint="@color/light_goldenrod_yellow"
-                android:gravity="center"
-                android:text="MEDIUM"
-                android:textColor="@color/green"
-                android:textSize="16sp"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintEnd_toStartOf="@+id/button_priority_low"
-                app:layout_constraintStart_toEndOf="@+id/button_priority_high"
-                app:layout_constraintTop_toBottomOf="@id/text_view_priority" />
+            </androidx.cardview.widget.CardView>
 
-            <Button
-                android:id="@+id/button_priority_low"
-                android:layout_width="105dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:backgroundTint="@color/water"
-                android:gravity="center"
-                android:text="LOW"
-                android:textColor="@color/resolution_blue"
-                android:textSize="16sp"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/button_priority_medium"
-                app:layout_constraintTop_toBottomOf="@id/text_view_priority" />
 
             <TextView
                 android:id="@+id/text_view_deadline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:layout_marginTop="20dp"
                 android:text="Task Deadline"
+                android:textColor="@color/purple_500"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_priority_high"
-                android:textColor="@color/purple_500"/>
+                app:layout_constraintTop_toBottomOf="@id/card_view_priority" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_view_deadline"
@@ -201,9 +182,9 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:background="@null"
-                    android:gravity="start|center_vertical"
+                    android:gravity="center"
                     android:maxLines="1"
-                    android:text="Task Title"
+                    android:text="Task Deadline"
                     android:textSize="16sp"
                     android:textColor="@color/blue_gray" />
             </androidx.cardview.widget.CardView>
@@ -212,14 +193,14 @@
                 android:id="@+id/text_view_project"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
                 android:layout_marginTop="20dp"
                 android:text="Belongs To Project"
+                android:textColor="@color/purple_500"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_view_deadline"
-                android:textColor="@color/purple_500"/>
+                app:layout_constraintTop_toBottomOf="@id/card_view_deadline" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_view_project"
@@ -234,17 +215,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_view_project" >
 
-                <TextView
-                    android:id="@+id/text_view_text_project"
+                <Spinner
+                    android:id="@+id/spinner_project"
                     style="@style/Widget.AppCompat.EditText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:background="@null"
                     android:ellipsize="end"
                     android:gravity="start|center_vertical"
                     android:maxLines="1"
-                    android:text="Belongs To Project"
                     android:textSize="16sp"
                     android:textColor="@color/blue_gray"/>
             </androidx.cardview.widget.CardView>

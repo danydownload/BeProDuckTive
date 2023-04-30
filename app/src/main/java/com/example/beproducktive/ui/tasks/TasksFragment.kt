@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beproducktive.R
 import com.example.beproducktive.databinding.FragmentTasksBinding
+import com.example.beproducktive.ui.addedittasks.TaskSource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,7 +32,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
 //            findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(task))
-            findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(projectName, task))
+            findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(projectName = projectName, task = task, taskSource = TaskSource.FROM_TASK_VIEW))
 
         })
 
@@ -75,10 +76,10 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
             val args = TasksFragmentArgs.fromBundle(bundle)
             args.project?.let { Log.d("CIAO-P", it.projectName) }
             if (args.project != null) {
-                val list = viewModel.onReceiveProject(args.project!!.projectName)
+                val list = viewModel.onReceiveProject(args.project.projectName)
 
                 binding.apply {
-                    textviewProjectName.text = "Project: ${args.project!!.projectName}".uppercase()
+                    textviewProjectName.text = "Project: ${args.project.projectName}".uppercase()
                     projectName = args.project.projectName
                     fabAddTask.setColorFilter(ContextCompat.getColor(view.context, R.color.blue_gray));
                 }
@@ -109,6 +110,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
     }
 
     fun NavController.safeNavigate(direction: NavDirections) {
+
         currentDestination?.getAction(direction.actionId)?.run {
             navigate(direction)
         }

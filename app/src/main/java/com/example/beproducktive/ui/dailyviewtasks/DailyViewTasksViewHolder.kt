@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.beproducktive.R
 import com.example.beproducktive.data.calendar.MyCalendar
 import com.example.beproducktive.databinding.DateListRowBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DailyViewTasksViewHolder(
     private val binding: DateListRowBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    private val tb_month: TextView = binding.month1
     private val tb_day: TextView = binding.day1
     private val tb_date: TextView = binding.date1
 
@@ -27,24 +30,24 @@ class DailyViewTasksViewHolder(
             tb_day.text = calendar.day
             tb_date.text = calendar.date
 
-            if (calendar.isSelected) {
+            val monthName = calendar.getMonthFromInt(calendar.month!!.toInt())
+            tb_month.text = monthName
+            tb_month.setTextColor(Color.BLACK)
 
-                // date1 and day1 contains the data of the element selected by the user
-                println("date1: ${date1.text}")
-                println("day1: ${day1.text}")
+
+            if (calendar.isSelected) {
 
                 date1.setTextColor(Color.CYAN)
 
-                if (day1.text == "dom" || day1.text == "sun") {
+                if (day1.text == "dom" || day1.text == "Sun") {
                     day1.setTextColor(Color.RED)
                 } else {
                     day1.setTextColor(Color.BLACK)
                 }
-            }
-            else {
+            } else {
                 date1.setTextColor(Color.BLACK)
 
-                if (day1.text == "dom" || day1.text == "sun") {
+                if (day1.text == "dom" || day1.text == "Sun") {
                     day1.setTextColor(Color.RED)
                 } else {
                     day1.setTextColor(Color.BLACK)
@@ -62,7 +65,8 @@ class DailyViewTasksViewHolder(
 
     companion object {
         fun create(parent: ViewGroup): DailyViewTasksViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.date_list_row, parent, false)
+            val view =
+                LayoutInflater.from(parent.context).inflate(R.layout.date_list_row, parent, false)
             val binding = DateListRowBinding.bind(view)
             return DailyViewTasksViewHolder(binding)
         }

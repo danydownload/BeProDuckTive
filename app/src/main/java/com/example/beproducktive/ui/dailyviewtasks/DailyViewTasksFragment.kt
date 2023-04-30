@@ -25,6 +25,7 @@ import com.example.beproducktive.R
 import com.example.beproducktive.data.calendar.MyCalendar
 import com.example.beproducktive.data.calendar.MyCalendarData
 import com.example.beproducktive.databinding.FragmentDailyViewTasksBinding
+import com.example.beproducktive.ui.addedittasks.TaskSource
 import com.example.beproducktive.ui.tasks.TasksAdapter
 import com.example.beproducktive.ui.tasks.TasksFragmentDirections
 import com.example.beproducktive.ui.tasks.TasksViewModel
@@ -39,12 +40,11 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
     private var calendarList = ArrayList<MyCalendar>()
     private lateinit var mAdapter: DailyViewTasksAdapter
-    private lateinit var forward: ImageView
-    private lateinit var reverse: ImageView
     private var currentPosition = 0
 
     private lateinit var recyclerViewTasks2: RecyclerView
     private lateinit var mLayoutManager: LinearLayoutManager
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,6 +53,12 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
+
+            viewModel.getProjectNameForTask(task.taskId).observe(viewLifecycleOwner) { projectName ->
+                findNavController().navigate(DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(projectName = projectName!!, task = task, taskSource = TaskSource.FROM_DAILY_VIEW))
+            }
+
+
         })
 
         recyclerViewTasks2 = binding.recyclerViewTasks2
@@ -64,9 +70,6 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                 layoutManager = LinearLayoutManager(requireContext())
                 setHasFixedSize(true)
             }
-
-            forward = forwardIm
-            reverse = reverseIm
 
 
             mAdapter = DailyViewTasksAdapter(DailyViewTasksAdapter.OnClickListener { calendar ->
@@ -111,24 +114,6 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             })
 
 
-            forward.setOnClickListener {
-                currentPosition = getCurrentItem()
-
-                val bottom = recyclerViewTasks2.adapter?.itemCount?.minus(1) ?: 0
-                if (bottom - currentPosition < 4) {
-                    currentPosition = bottom - 1
-                } else {
-                    currentPosition += 4
-                }
-
-                setCurrentItem(currentPosition, 1)
-            }
-
-            reverse.setOnClickListener {
-                currentPosition = getCurrentItem()
-                setCurrentItem(currentPosition - 5, 0)
-            }
-
             mLayoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -151,6 +136,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                         for (i in 0 until totalItemCount) {
                             val childView: View = recyclerViewTasks2.getChildAt(i)
                             val childTextView: TextView = childView.findViewById(R.id.day_1)
+                            // setting the day of the week
                             val childTextViewText: String = childTextView.text.toString()
                             if (childTextViewText.equals(
                                     "Sun",
@@ -187,6 +173,12 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                 taskAdapter.submitList(tasksList)
             }
 
+            // TODO FIX THIS: add direction to navigate to AddEditFragment
+            fabAddTask.setOnClickListener {
+//                findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment("", null, TaskSource.FROM_DAILY_VIEW))
+                findNavController().navigate(DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToTasksFragment())
+            }
+
         }
     }
 
@@ -212,9 +204,15 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
         // initialize mycalendarData and get Instance
         // getnext to get next set of date etc.. which can be used to populate MyCalendarList in for loop
 
-        val mCalendar = MyCalendarData(-2)
+        // if the calendar is not empty that means that it is already populated
+        if (calendarList.isNotEmpty()) {
+            return
+        }
 
-        for (i in 0 until 365) {
+
+        val mCalendar = MyCalendarData(-2)
+        // just create 30 days forward from today
+        for (i in 0 until 30) {
             val calendar = MyCalendar(
                 mCalendar.getWeekDay(),
                 mCalendar.getDay().toString(),

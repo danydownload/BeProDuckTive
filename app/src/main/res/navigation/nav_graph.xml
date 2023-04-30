@@ -45,10 +45,29 @@
             android:defaultValue="@null" />
         <argument
             android:name="projectName"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue='""' />
+        <action
+            android:id="@+id/action_addEditFragment_to_dailyViewTasksFragment"
+            app:destination="@id/dailyViewTasksFragment" />
+        <argument
+            android:name="taskSource"
+            app:argType="com.example.beproducktive.ui.addedittasks.TaskSource"
+            android:defaultValue="FROM_TASK_VIEW" />
+        <action
+            android:id="@+id/action_addEditFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment" />
     </fragment>
     <fragment
         android:id="@+id/dailyViewTasksFragment"
         android:name="com.example.beproducktive.ui.dailyviewtasks.DailyViewTasksFragment"
-        android:label="DailyViewTasksFragment" />
+        android:label="DailyViewTasksFragment" >
+        <action
+            android:id="@+id/action_dailyViewTasksFragment_to_addEditFragment"
+            app:destination="@id/addEditFragment" />
+        <action
+            android:id="@+id/action_dailyViewTasksFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment" />
+    </fragment>
 </navigation>

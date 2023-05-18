@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beproducktive.R
 import com.example.beproducktive.data.tasks.Task
@@ -27,6 +29,8 @@ class TasksViewHolder(
             setTaskPriority(task, cardView)
             deadline.text = task.deadlineFormatted
             textViewDescription.text = task.description
+
+
             
         }
     }

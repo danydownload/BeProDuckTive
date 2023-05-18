@@ -53,10 +53,12 @@ class DailyViewTasksViewHolder(
                     day1.setTextColor(Color.BLACK)
                 }
 
-                val currentDay = calendar.getCurrentDate().split("-")[0]
-                if (currentDay == calendar.date) {
+                val currentDay = calendar.getCurrentDate().split("-")[0].toInt()
+                if (currentDay == calendar.date!!.toInt()) {
                     date1.setTextColor(Color.GREEN)
                 }
+//                Log.e("RW-BIND", "currentDay: $currentDay, calendar.date: ${calendar.date}")
+
             }
 
         }

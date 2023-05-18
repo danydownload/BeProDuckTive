@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/dailyViewTasksFragment">
+    app:startDestination="@id/tasksFragment">
     <fragment
         android:id="@+id/tasksFragment"
         android:name="com.example.beproducktive.ui.tasks.TasksFragment"
@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_tasksFragment_to_addEditFragment"
             app:destination="@id/addEditFragment" />
+        <action
+            android:id="@+id/action_tasksFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
     </fragment>
     <fragment
         android:id="@+id/projectsFragment"
@@ -32,6 +35,9 @@
         <action
             android:id="@+id/action_projectsFragment_to_tasksFragment"
             app:destination="@id/tasksFragment" />
+        <action
+            android:id="@+id/action_projectsFragment_to_addProjectFragment"
+            app:destination="@id/addProjectFragment" />
     </fragment>
     <fragment
         android:id="@+id/addEditFragment"
@@ -69,5 +75,22 @@
         <action
             android:id="@+id/action_dailyViewTasksFragment_to_tasksFragment"
             app:destination="@id/tasksFragment" />
+        <action
+            android:id="@+id/action_dailyViewTasksFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addProjectFragment"
+        android:name="com.example.beproducktive.ui.projects.AddProjectFragment"
+        android:label="fragment_add_project"
+        tools:layout="@layout/fragment_add_project" />
+    <fragment
+        android:id="@+id/timerFragment"
+        android:name="com.example.beproducktive.ui.timer.TimerFragment"
+        android:label="fragment_timer"
+        tools:layout="@layout/fragment_timer" >
+        <argument
+            android:name="task"
+            app:argType="com.example.beproducktive.data.tasks.Task" />
     </fragment>
 </navigation>

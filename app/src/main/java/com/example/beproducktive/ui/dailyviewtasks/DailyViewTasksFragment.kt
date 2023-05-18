@@ -1,18 +1,12 @@
 package com.example.beproducktive.ui.dailyviewtasks
 
 import android.graphics.Color
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.support.v4.os.IResultReceiver.Default
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.AbsListView.RecyclerListener
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -30,7 +24,6 @@ import com.example.beproducktive.ui.tasks.TasksAdapter
 import com.example.beproducktive.ui.tasks.TasksFragmentDirections
 import com.example.beproducktive.ui.tasks.TasksViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
@@ -57,9 +50,11 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             viewModel.getProjectNameForTask(task.taskId).observe(viewLifecycleOwner) { projectName ->
                 findNavController().navigate(DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(projectName = projectName!!, task = task, taskSource = TaskSource.FROM_DAILY_VIEW))
             }
-
-
+        }, TasksAdapter.OnTimerClickListener { task ->
+            findNavController().navigate(DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToTimerFragment(task))
         })
+
+
 
         recyclerViewTasks2 = binding.recyclerViewTasks2
 

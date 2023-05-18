@@ -7,8 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="40dp"
     android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
     android:layout_marginRight="40dp"
+    android:layout_marginBottom="10dp"
     app:cardCornerRadius="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,16 +54,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/image_view_timer"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="30dp"
+            android:src="@drawable/ic_action_timer"
+            app:layout_constraintEnd_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/dark_pastel_red" />
+
 
         <TextView
             android:id="@+id/text_view_description"
             android:layout_width="290dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:paddingStart="4dp"
             android:paddingEnd="0dp"
-            android:layout_marginTop="10dp"
             android:text="Questa e' una breve descrizione di un task. E' importante occupare due righe massimo. AAAAAAAAAAAAAAAA"
             android:textColor="@color/nickel"
             android:textSize="14sp"
@@ -105,10 +115,10 @@
             android:textColor="@color/nickel"
             android:textSize="16sp"
             app:drawableStartCompat="@drawable/ic_baseline_calendar_today_24"
+            app:drawableTint="@color/purple_700"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="2020-05-06"
-            app:drawableTint="@color/purple_700" />
+            tools:text="2020-05-06" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

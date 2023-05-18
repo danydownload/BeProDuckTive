@@ -17,6 +17,32 @@
                             <option name="y" value="197" />
                           </Point>
                         </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_addEditFragment_to_dailyViewTasksFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_addEditFragment_to_tasksFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="addProjectFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="578" />
+                            <option name="y" value="-111" />
+                          </Point>
+                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -32,6 +58,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_dailyViewTasksFragment_to_addEditFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_dailyViewTasksFragment_to_tasksFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -53,6 +84,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_projectsFragment_to_addEditFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_projectsFragment_to_addProjectFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -89,6 +125,18 @@
                               </value>
                             </entry>
                           </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="timerFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="264" />
+                            <option name="y" value="-504" />
+                          </Point>
                         </option>
                       </LayoutPositions>
                     </value>

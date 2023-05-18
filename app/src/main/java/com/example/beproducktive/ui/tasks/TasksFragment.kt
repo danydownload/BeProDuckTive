@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beproducktive.R
 import com.example.beproducktive.databinding.FragmentTasksBinding
+import com.example.beproducktive.databinding.ItemTaskBinding
 import com.example.beproducktive.ui.addedittasks.TaskSource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,13 +29,16 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
         val binding =  FragmentTasksBinding.bind(view)
 
-        val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
 
+        val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
 //            findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(task))
             findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(projectName = projectName, task = task, taskSource = TaskSource.FROM_TASK_VIEW))
 
+        }, TasksAdapter.OnTimerClickListener { task ->
+            findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToTimerFragment(task))
         })
+
 
 
         binding.apply {
@@ -51,6 +55,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
             fabAddTask.setOnClickListener {
                 findNavController().navigate(R.id.action_tasksFragment_to_addEditFragment)
             }
+
         }
 
         val bundle = arguments

@@ -60,11 +60,19 @@
     <color name="misty_rose">#FA8072</color>
     <color name="fawn">#DAB96A</color>
     <color name="baby_blue">#89CFF0</color>
-    <color name="peach_puff">#FFDAB9</color>
+        <color name="peach_puff">#FFDAB9</color>
 
     <!-- Paperina colors -->
     <color name="blue_gray">#63A7CC</color>
     <color name="sizzling_sunrise">#FEDC00</color>
     <color name="halloween_orange">#F25623</color>
 
+    <color name="vista_blue">#8692F7</color>
+    <color name="lavender">#B57EDC</color>
+    <color name="dark_pastel_purple">#9B88D7</color>
+    <color name="dark_pastel_red">#C23B22</color>
+    <color name="lavender_pink">#FBAED2</color>
+
+    <color name="turquoise">#30D9EF</color>
+    <color name="winter_wizard">#96E8F3</color>
 </resources>

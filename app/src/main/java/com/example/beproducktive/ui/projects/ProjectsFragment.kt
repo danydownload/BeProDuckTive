@@ -40,7 +40,9 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
             }
 
             buttonNewProject.setOnClickListener {
-//                findNavController().navigate(R.id.action_projectsFragment_to_addEditFragment)
+//                findNavController().navigate(R.id.action_projectsFragment_to_addProjectFragment)
+//                val AddProjectFragment = AddProjectFragment()
+//                AddProjectFragment.show(requireActivity().supportFragmentManager, "AddProjectFragment")
             }
 
         }

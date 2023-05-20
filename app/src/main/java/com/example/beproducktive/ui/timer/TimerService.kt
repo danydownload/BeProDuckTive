@@ -24,7 +24,6 @@ class TimerService : Service() {
     private var isTimeStarted = false
     private var pauseCount = 0
 
-
     override fun onCreate() {
         super.onCreate()
 
@@ -37,7 +36,6 @@ class TimerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("Timer_cd ", "onStartCommand: ")
 
-
         intent?.let {
             Log.d("Timer_cd ", "onStartCommand: ${it.action}")
             when (it.action) {
@@ -49,17 +47,13 @@ class TimerService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-
     private fun pauseTimer() {
-        print("pauseTimer")
         timeCountDown?.cancel()
         isTimerRunning = true
         sendTimerRunningBroadcast(isTimerRunning)
-//            showNotification("Timer Paused")
     }
 
     private fun startTimer() {
-
         timeCountDown = object : CountDownTimer(
             timeSelected * 1000L - pauseOffSet * 1000,
             1000
@@ -71,7 +65,6 @@ class TimerService : Service() {
                 val timeLeftInMinutes = timeLeftInSeconds / 60
                 val timeLeftInFormattedString =
                     String.format("%02d:%02d", timeLeftInMinutes, timeLeftInSeconds % 60)
-//                Log.d("Timer_cd", "onTick: $timeLeftInFormattedString")
 
                 sendTimerTickBroadcast(timeLeftInFormattedString)
 
@@ -80,34 +73,29 @@ class TimerService : Service() {
 
                 isTimeStarted = true
                 sendTimerIsStartedBroadcast(isTimeStarted)
-
-
-//                    updateNotification(timeProgress)
             }
 
             override fun onFinish() {
                 if (pauseCount != 0) {
                     resetTimer()
                     pauseCount = 0
-                }
-                else {
-                    Log.d("Timer_cd", "onFinish: pauseCount: $pauseCount")
+                } else {
                     startPause()
                     pauseCount++
                 }
 
                 sendTimerFinishBroadcast()
-//                    showNotification("Times Up!")
+
+                // Play the end sound
+                mediaPlayerEnd?.start()
             }
         }
         timeCountDown?.start()
         isTimeStarted = true
         sendTimerIsStartedBroadcast(isTimeStarted)
-//            showNotification("Timer Started")
         mediaPlayerStart?.start()
         isTimerRunning = false
         sendTimerRunningBroadcast(isTimerRunning)
-
     }
 
     private fun resetTimer() {
@@ -144,6 +132,7 @@ class TimerService : Service() {
             }
 
             override fun onFinish() {
+                mediaPlayerEnd?.start()
                 pauseCount = 0
                 resetTimer()
                 sendTimerFinishBroadcast()
@@ -152,15 +141,12 @@ class TimerService : Service() {
         timeCountDown?.start()
         isTimeStarted = true
         sendTimerIsStartedBroadcast(isTimeStarted)
-        mediaPlayerStart?.start()
+//        mediaPlayerStart?.start()
         isTimerRunning = false
         sendTimerRunningBroadcast(isTimerRunning)
     }
 
-
-
     private fun sendTimerTickBroadcast(timeLeftInFormattedString: String) {
-//        Log.d("Timer_cd", "sendTimerTickBroadcast: $timeLeftInFormattedString")
         val intent = Intent(ACTION_TIMER_TICK)
         intent.putExtra(EXTRA_TIME_REMAINING, timeLeftInFormattedString)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
@@ -183,7 +169,6 @@ class TimerService : Service() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-
     companion object {
         private const val CHANNEL_ID = "TimerServiceChannel"
         private const val CHANNEL_NAME = "Timer Service Channel"
@@ -195,7 +180,4 @@ class TimerService : Service() {
         const val TIME_RUNNING = "time_running"
         const val TIMER_STARTED = "timer_started"
     }
-
 }
-
-

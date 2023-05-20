@@ -20,11 +20,6 @@
             android:icon="@drawable/ic_action_projects"
             android:title="Projects" />
 
-        <item
-            android:id="@+id/nav_timer_view"
-            android:icon="@drawable/ic_action_timer"
-            android:title="Timer" />
-
     </group>
 
     <item android:title="Controls">

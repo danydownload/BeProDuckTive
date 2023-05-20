@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.beproducktive.R
 import com.example.beproducktive.data.tasks.TaskPriority
@@ -22,36 +23,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class TimerFragment : Fragment(R.layout.fragment_timer) {
 
-    private var timeLeft: String? = null
+    private var timeLeft: String? = "50:00"
     private var binding: FragmentTimerBinding? = null
+
     private var isTimerRunning = true
+    private var isTimerStarted = false
 
 
-    private val timeUpdateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == TimerService.ACTION_TIMER_TICK) {
-                timeLeft = intent.getStringExtra(TimerService.EXTRA_TIME_REMAINING)
-                // Find the TimerFragment and update the UI with the received time
-                binding?.apply{
-                    tvTimeLeft.text = timeLeft
-                    btnPlayPause.text = "Pause"
-                }
-            }
-        }
-    }
-
-    private val isTimerRunningReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == TimerService.TIME_RUNNING) {
-                isTimerRunning = intent.getBooleanExtra(TimerService.TIME_RUNNING, true)
-//                Log.d("Timer_cd ", "IsTimerRunning UPDATED: $isTimerRunning")
-                // Find the TimerFragment and update the UI with the received time
-                binding?.apply{
-                    tvTimeLeft.text = timeLeft
-                }
-            }
-        }
-    }
+    val sharedViewModel: TimerSharedViewModel by activityViewModels()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,34 +38,56 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
 
         binding = FragmentTimerBinding.bind(view)
 
-        binding?.apply {
+//        Log.d("ViewModel", "Fragment ViewModel: $sharedViewModel")
 
+
+
+        binding?.apply {
             tvTimeLeft.text = timeLeft
-            btnPlayPause.text = "Start"
+
+
+            sharedViewModel.timeLeft.observe(viewLifecycleOwner) { it_timeLeft ->
+//                Log.d("Timer_cd ", "Fragment: TimeLeft UPDATED: $it_timeLeft")
+                tvTimeLeft.text = it_timeLeft
+            }
+
+
+            sharedViewModel.isTimerStarted.observe(viewLifecycleOwner) { it_isTimerStarted ->
+                isTimerStarted = it_isTimerStarted
+                if (!isTimerStarted) {
+                    btnPlayPause.text = "Start"
+                }
+            }
+
+            sharedViewModel.isTimerRunning.observe(viewLifecycleOwner) { it_isTimerRunning ->
+                isTimerRunning = it_isTimerRunning
+
+                if (isTimerRunning) {
+                    btnPlayPause.text = "Resume"
+                } else {
+                    btnPlayPause.text = "Pause"
+                }
+            }
+
 
             val startBtn: Button = btnPlayPause
             startBtn.setOnClickListener {
-    //                startTimerSetup(binding)
-
-                Log.d("Timer_cd","is timer running: $isTimerRunning")
-
+                // Do the opposite of what isTimerRunning is, beacuse the button is showing the next action
                 if (isTimerRunning) {
-                    Log.d("Timer_cd", "CALLED IS TIMER RUNNING")
                     startBtn.text = "Pause"
                     startTimerIntent()
-                    isTimerRunning = false
                 } else {
-                    Log.d("Timer_cd", "CALLED IS TIMER NOT RUNNING")
                     startBtn.text = "Resume"
                     pauseTimerIntent()
-                    isTimerRunning = true
                 }
-
             }
+
+
+
 
             val resetBtn: ImageButton = btnReset
             resetBtn.setOnClickListener {
-    //                resetTime(binding)
+                //                resetTime(binding)
             }
 
             val bundle = arguments
@@ -148,8 +149,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         }
     }
 
-    private fun startTimerIntent()
-    {
+    private fun startTimerIntent() {
         val serviceIntent = Intent(requireContext(), TimerService::class.java).apply {
             action = "START_TIMER"
         }
@@ -166,56 +166,24 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
     }
 
 
-
     override fun onStart() {
         super.onStart()
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
-            timeUpdateReceiver,
-            IntentFilter(TimerService.ACTION_TIMER_TICK).apply {
-                addAction(TimerService.ACTION_TIMER_FINISH)
-            })
 
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
-            isTimerRunningReceiver,
-            IntentFilter(TimerService.TIME_RUNNING))
     }
 
     override fun onStop() {
         super.onStop()
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(timeUpdateReceiver)
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(isTimerRunningReceiver)
     }
 
     override fun onResume() {
         super.onResume()
 
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
-            timeUpdateReceiver,
-            IntentFilter(TimerService.ACTION_TIMER_TICK).apply {
-                addAction(TimerService.ACTION_TIMER_FINISH)
-            })
-
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
-            isTimerRunningReceiver,
-            IntentFilter(TimerService.TIME_RUNNING))
-
-        Log.d("Timer_cd", "onResume called")
-        Log.d("Timer_cd", "onResume timeLeft: $timeLeft")
-
-        binding?.apply {
-            tvTimeLeft.text = timeLeft ?: "50:00"
-        }
 
     }
 
     override fun onPause() {
         super.onPause()
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(timeUpdateReceiver)
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(isTimerRunningReceiver)
     }
-
-
-
 
 
 }

@@ -2,10 +2,8 @@ package com.example.beproducktive.ui.timer
 
 import android.content.*
 import android.graphics.Typeface
-import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.IBinder
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -14,8 +12,8 @@ import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.beproducktive.R
+import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskPriority
 import com.example.beproducktive.databinding.FragmentTimerBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +27,8 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
     private var isTimerRunning = true
     private var isTimerStarted = false
 
+    private var taskId = -1
+    private var mTask : Task? = null
 
     val sharedViewModel: TimerSharedViewModel by activityViewModels()
 
@@ -39,7 +39,6 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         binding = FragmentTimerBinding.bind(view)
 
 //        Log.d("ViewModel", "Fragment ViewModel: $sharedViewModel")
-
 
 
         binding?.apply {
@@ -72,6 +71,8 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
 
             val startBtn: Button = btnPlayPause
             startBtn.setOnClickListener {
+                Log.d("TaskId", "TimerFragment: TaskId: $taskId")
+
                 // Do the opposite of what isTimerRunning is, beacuse the button is showing the next action
                 if (isTimerRunning) {
                     startBtn.text = "Pause"
@@ -83,10 +84,9 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             }
 
 
-
-
             val resetBtn: ImageButton = btnReset
             resetBtn.setOnClickListener {
+                resetTimerIntent()
                 //                resetTime(binding)
             }
 
@@ -94,6 +94,9 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             if (bundle != null) {
                 val args = TimerFragmentArgs.fromBundle(bundle)
                 args.task.let { task ->
+                    taskId = task.taskId
+                    mTask = task
+
                     taskItem.apply {
                         imageViewTimer.isVisible = false
                         textviewTaskTitle.text = task.taskTitle
@@ -149,12 +152,32 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         }
     }
 
+    private fun resetTimerIntent() {
+        val serviceIntent = Intent(requireContext(), TimerService::class.java).apply {
+            action = "RESET_TIMER"
+        }
+        Log.d("Timer_cd", "resetTimerIntent called")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireContext().startForegroundService(serviceIntent)
+        } else {
+            requireContext().startService(serviceIntent)
+        }
+    }
+
     private fun startTimerIntent() {
+
         val serviceIntent = Intent(requireContext(), TimerService::class.java).apply {
             action = "START_TIMER"
+            putExtra("task", mTask)
         }
         Log.d("Timer_cd", "startTimerIntent called")
-        requireContext().startService(serviceIntent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireContext().startForegroundService(serviceIntent)
+        } else {
+            requireContext().startService(serviceIntent)
+        }
     }
 
     private fun pauseTimerIntent() {
@@ -162,7 +185,13 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             action = "PAUSE_TIMER"
         }
         Log.d("Timer_cd", "pauseTimerIntent called")
-        requireContext().startService(serviceIntent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireContext().startForegroundService(serviceIntent)
+        } else {
+            requireContext().startService(serviceIntent)
+        }
+
     }
 
 

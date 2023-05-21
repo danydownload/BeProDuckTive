@@ -14,12 +14,15 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.beproducktive.R
-import com.example.beproducktive.ui.timer.TimerFragment
+import com.example.beproducktive.data.tasks.Task
+import com.example.beproducktive.ui.tasks.TasksFragmentDirections
 import com.example.beproducktive.ui.timer.TimerService
 import com.example.beproducktive.ui.timer.TimerSharedViewModel
 import com.google.android.material.navigation.NavigationView
@@ -65,12 +68,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (intent?.action == "TIMER_FRAGMENT") {
+            val task = intent.getParcelableExtra<Task>("task")
+//            val task = intent.getBundleExtra("task")
+            if (task != null) {
+                Log.d("TaskId ", "MainActivity: task: ${task.taskId}")
+                navigateToTimerFragment(task)
+            } else {
+                Log.d("TaskId ", "MainActivity: Task object is null")
+                // Handle the case when the "task" extra is null
+            }
+        }
 
 //        Log.d("ViewModel", "MainActivity ViewModel: $sharedViewModel")
 
@@ -101,6 +113,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Add the callback to the activity's OnBackPressedDispatcher
         onBackPressedDispatcher.addCallback(this, callback)
 
+    }
+
+    private fun navigateToTimerFragment(task: Task) {
+        val bundle = bundleOf("task" to task)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        navController.navigate(R.id.timerFragment, bundle)
     }
 
 

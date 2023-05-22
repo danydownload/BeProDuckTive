@@ -35,6 +35,9 @@ interface ProjectDao {
     @Query("SELECT projectName FROM project_table INNER JOIN task_table ON project_table.projectName = task_table.belongsToProject WHERE taskId = :taskId")
     fun getProjectNameForTask(taskId: Int): Flow<String>
 
+    @Query("SELECT * FROM project_table LIMIT 1")
+    fun getFirstProject(): Flow<Project>
+
     @Query("DELETE FROM project_table")
     fun deleteAllProjects()
 

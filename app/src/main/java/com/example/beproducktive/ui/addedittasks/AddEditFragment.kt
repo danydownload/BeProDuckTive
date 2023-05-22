@@ -81,16 +81,28 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
 
                 spinnerProject.adapter = sp2Adapter
 
-                val index = projectNames.indexOf(viewModel.taskProject)
-                if (index >= 0) {
-                    spinnerProject.setSelection(index)
+                // Log projectnames and log viewModel.projectName
+                Log.d("PROJECTNAMES", projectNames.toString())
+
+
+                if (viewModel.taskProject.isEmpty()) {
+                    val index = projectNames.indexOf(viewModel.projectName)
+                    if (index >= 0) {
+                        spinnerProject.setSelection(index)
+                    }
+                }
+                else {
+                    val index = projectNames.indexOf(viewModel.taskProject)
+                    if (index >= 0) {
+                        spinnerProject.setSelection(index)
+                    }
                 }
 
 
                 editTextTitle.setText(viewModel.taskName)
                 editTextDescription.setText(viewModel.taskDescription)
                 textViewTextDeadline.text = viewModel.taskDeadlineFormatted
-                val priorityOrdinal = viewModel.task?.priority?.ordinal ?: 0
+                val priorityOrdinal = viewModel.task?.priority?.ordinal ?: 1
                 spinnerTaskPriority.setSelection(priorityOrdinal)
 
                 editTextTitle.addTextChangedListener {

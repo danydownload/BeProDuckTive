@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import androidx.navigation.NavController
 import com.example.beproducktive.R
 import com.example.beproducktive.data.projectandtasks.ProjectAndTasks
+import com.example.beproducktive.data.projects.Project
 import com.example.beproducktive.data.projects.ProjectDao
 import com.example.beproducktive.data.projects.ProjectRepository
 import com.example.beproducktive.data.tasks.Task
@@ -31,9 +32,15 @@ class TasksViewModel @Inject constructor(
 
     val allTasks = taskRepository.getTasks().asLiveData()
 
-    fun getTasksForDate(date: String?) = taskRepository.getTasksByDeadline(date!!).asLiveData()
+    val firstProject = projectRepository.getFirstProject().asLiveData()
 
-    fun getProjectNameForTask(taskId: Int) = taskRepository.getProjectNameForTask(taskId).asLiveData()
+    val project = state.get<Project>("project")
+
+    var projectName = state.get<String>("projectName") ?: project?.projectName ?: ""
+        set(value) {
+            field = value
+            state["projectName"] = value
+        }
 
 
     val tasks: LiveData<List<Task>> = liveData {
@@ -60,6 +67,11 @@ class TasksViewModel @Inject constructor(
         }
     }
 
+    fun getTasksForDate(date: String?) = taskRepository.getTasksByDeadline(date!!).asLiveData()
+
+    fun getProjectNameForTask(taskId: Int) =
+        taskRepository.getProjectNameForTask(taskId).asLiveData()
+
     fun tasksOrderedByPriority(projectAndTasks: ProjectAndTasks): List<Task> =
         projectAndTasks.tasks.sortedByDescending { it.priority }
 
@@ -69,9 +81,6 @@ class TasksViewModel @Inject constructor(
     fun hideTasksCompleted(projectAndTasks: ProjectAndTasks): List<Task> =
         projectAndTasks.tasks.filter { !it.completed }
 
-    fun onClickProject(findNavController: NavController) {
-        findNavController.navigate(R.id.action_tasksFragment_to_projectsFragment)
-    }
 
     fun onReceiveProject(projectName: String) =
         emitTasksByProjectName(projectName)
@@ -111,17 +120,19 @@ class TasksViewModel @Inject constructor(
         _tasksEventChannel.send(TasksEvent.RefreshTasks(dateSelected))
     }
 
+    fun onProjectClicked() = viewModelScope.launch {
+        _tasksEventChannel.send(TasksEvent.NavigateToProjectScreen)
+    }
+
 
     sealed class TasksEvent {
 
         object NavigateToAddTaskScreen : TasksEvent()
+        object NavigateToProjectScreen : TasksEvent()
         data class NavigateToEditTaskScreen(val projectName: String, val task: Task) : TasksEvent()
         data class NavigateToTimerFragment(val task: Task) : TasksEvent()
         data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
-
         data class RefreshTasks(val dateSelected: String) : TasksEvent()
-
-
 
 
     }

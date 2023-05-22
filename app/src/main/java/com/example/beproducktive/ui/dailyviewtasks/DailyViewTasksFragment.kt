@@ -197,6 +197,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                             taskAdapter.submitList(tasksList)
                         }
                     }
+                    TasksViewModel.TasksEvent.NavigateToProjectScreen -> {}
                 }
             }
         }

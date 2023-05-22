@@ -46,7 +46,6 @@ class TimerService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("Timer_cd ", "onStartCommand: ")
 
         intent?.let {
             Log.d("Timer_cd ", "onStartCommand: ${it.action}")
@@ -55,8 +54,8 @@ class TimerService : Service() {
                     intent.extras?.let { bundle ->
                         referencedTaskId = bundle.getInt("taskId")
                         referencedTask = bundle.getParcelable("task")
-                        Log.d("Timer_cd ", "referencedTask: ${referencedTask!!.taskId}")
-                        Log.d("Timer_cd ", "onStartCommand: taskId: $referencedTaskId")
+//                        Log.d("Timer_cd ", "referencedTask: ${referencedTask!!.taskId}")
+//                        Log.d("Timer_cd ", "onStartCommand: taskId: $referencedTaskId")
                     }
                     startTimer()
                 }

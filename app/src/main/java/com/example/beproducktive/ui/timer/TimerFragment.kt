@@ -87,7 +87,6 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             val resetBtn: ImageButton = btnReset
             resetBtn.setOnClickListener {
                 resetTimerIntent()
-                //                resetTime(binding)
             }
 
             val bundle = arguments

@@ -35,6 +35,8 @@ class AddEditViewModel @Inject constructor(
 
     val task = state.get<Task>("task")
 
+    val projectName = state.get<String>("projectName")
+
     var taskName = state.get<String>("taskName") ?: task?.taskTitle ?: ""
         set(value) {
             field = value

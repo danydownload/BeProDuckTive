@@ -48,10 +48,6 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
         }
 
         viewModel.projects.observe(viewLifecycleOwner) { projectsList ->
-            for (p in projectsList)
-            {
-                Log.d("PROJC-UP-O", p.projectName)
-            }
             projectAdapter.submitList(projectsList)
         }
 

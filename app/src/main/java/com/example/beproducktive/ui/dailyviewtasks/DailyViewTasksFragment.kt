@@ -9,7 +9,9 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
@@ -21,11 +23,15 @@ import com.example.beproducktive.R
 import com.example.beproducktive.data.calendar.MyCalendar
 import com.example.beproducktive.data.calendar.MyCalendarData
 import com.example.beproducktive.databinding.FragmentDailyViewTasksBinding
+import com.example.beproducktive.ui.addedittasks.AddEditViewModel
 import com.example.beproducktive.ui.addedittasks.TaskSource
 import com.example.beproducktive.ui.tasks.TasksAdapter
 import com.example.beproducktive.ui.tasks.TasksFragmentDirections
 import com.example.beproducktive.ui.tasks.TasksViewModel
+import com.example.beproducktive.utils.exhaustive
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
@@ -49,17 +55,14 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
 
-            viewModel.getProjectNameForTask(task.taskId).observe(viewLifecycleOwner) { projectName ->
-                findNavController().navigate(DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(projectName = projectName!!, task = task, taskSource = TaskSource.FROM_DAILY_VIEW))
-            }
+            Log.d("TASK-SELECTED", "task: $task")
+            viewModel.onTaskSelected(task.belongsToProject, task)
+
         }, TasksAdapter.OnTimerClickListener { task ->
-            findNavController().navigate(DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToTimerFragment(task))
+            viewModel.onTimerSelected(task)
         })
 
-
-
         recyclerViewTasks2 = binding.recyclerViewTasks2
-
 
         binding.apply {
             recyclerViewTasks.apply {
@@ -68,11 +71,10 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                 setHasFixedSize(true)
             }
 
-
             mAdapter = DailyViewTasksAdapter(DailyViewTasksAdapter.OnClickListener { calendar ->
 
-                Log.d("CLICKED-DATE", "${calendar.getSelectedDate()} is clicked!")
-                Log.d("CLICKED-DATE", "calendarList: ${calendarList}")
+//                Log.d("CLICKED-DATE", "${calendar.getSelectedDate()} is clicked!")
+//                Log.d("CLICKED-DATE", "calendarList: ${calendarList}")
 
                 calendar.isSelected = true
 
@@ -101,15 +103,9 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                     }
                 }
 
-                // when a day is selected, the tasks for that day are displayed
-                viewModel.getTasksForDate(dateSelected).observe(viewLifecycleOwner) { task ->
-                    taskAdapter.submitList(task)
-                }
-
-
+                viewModel.onDayClicked(dateSelected!!)
 
             })
-
 
             mLayoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -157,11 +153,6 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
             }
 
-//            fabAddTask.setOnClickListener {
-//                findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment())
-//            }
-
-            // create an instance of MyCalendar and call getCurrentDate method
             val calendar = MyCalendar()
             val currentDate = calendar.getCurrentDate()
             println("Current date: $currentDate")
@@ -170,12 +161,44 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                 taskAdapter.submitList(tasksList)
             }
 
-            // TODO FIX THIS: add direction to navigate to AddEditFragment
             fabAddTask.setOnClickListener {
-//                findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment("", null, TaskSource.FROM_DAILY_VIEW))
-                findNavController().navigate(DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToTasksFragment())
+                viewModel.onclickAddTask()
             }
 
+            setFragmentResultListener("add_edit_request") { _, bundle ->
+                Log.d("TasksFragment", "add_edit_request")
+                val result = bundle.getInt("add_edit_result")
+                viewModel.onAddEditResult(result)
+            }
+
+        }
+
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.tasksEvent.collect { event ->
+                when (event) {
+                    TasksViewModel.TasksEvent.NavigateToAddTaskScreen -> {
+                        val action = DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(projectName = null, task = null, taskSource = TaskSource.FROM_DAILY_VIEW)
+                        findNavController().navigate(action)
+                    }
+                    is TasksViewModel.TasksEvent.NavigateToEditTaskScreen -> {
+                        val action = DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(projectName = event.projectName, task = event.task, taskSource = TaskSource.FROM_DAILY_VIEW)
+                        findNavController().navigate(action)
+                    }
+                    is TasksViewModel.TasksEvent.NavigateToTimerFragment -> {
+                        val action = DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToTimerFragment(event.task)
+                        findNavController().navigate(action)
+                    }
+                    is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
+                    }
+                    is TasksViewModel.TasksEvent.RefreshTasks -> {
+                        viewModel.getTasksForDate(event.dateSelected).observe(viewLifecycleOwner) { tasksList ->
+                            taskAdapter.submitList(tasksList)
+                        }
+                    }
+                }
+            }
         }
     }
 

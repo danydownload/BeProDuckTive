@@ -27,9 +27,7 @@ class TasksViewModel @Inject constructor(
     private val projectRepository: ProjectRepository
 ) : ViewModel() {
 
-
     val projects = projectRepository.getProjects().asLiveData()
-
 
     val allTasks = taskRepository.getTasks().asLiveData()
 
@@ -71,7 +69,7 @@ class TasksViewModel @Inject constructor(
     fun hideTasksCompleted(projectAndTasks: ProjectAndTasks): List<Task> =
         projectAndTasks.tasks.filter { !it.completed }
 
-    fun onclickProject(findNavController: NavController) {
+    fun onClickProject(findNavController: NavController) {
         findNavController.navigate(R.id.action_tasksFragment_to_projectsFragment)
     }
 
@@ -83,7 +81,7 @@ class TasksViewModel @Inject constructor(
         _tasksEventChannel.send(TasksEvent.NavigateToEditTaskScreen(projectName, task))
     }
 
-    fun onclickAddTask() = viewModelScope.launch {
+    fun onClickAddTask() = viewModelScope.launch {
         _tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
     }
 
@@ -105,14 +103,23 @@ class TasksViewModel @Inject constructor(
         _tasksEventChannel.send(TasksEvent.ShowTaskSavedConfirmationMessage(text))
     }
 
+    fun onclickAddTask() = viewModelScope.launch {
+        _tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
+    }
+
+    fun onDayClicked(dateSelected: String) = viewModelScope.launch {
+        _tasksEventChannel.send(TasksEvent.RefreshTasks(dateSelected))
+    }
+
 
     sealed class TasksEvent {
 
         object NavigateToAddTaskScreen : TasksEvent()
         data class NavigateToEditTaskScreen(val projectName: String, val task: Task) : TasksEvent()
-        data class NavigateToAddEditFragment(val projectName: String, val task: Task) : TasksEvent()
         data class NavigateToTimerFragment(val task: Task) : TasksEvent()
         data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
+
+        data class RefreshTasks(val dateSelected: String) : TasksEvent()
 
 
 

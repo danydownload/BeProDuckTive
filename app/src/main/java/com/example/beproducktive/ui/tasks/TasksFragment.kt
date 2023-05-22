@@ -54,12 +54,13 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 setHasFixedSize(true)
             }
 
+            // TODO - Handle as event
             cardView.setOnClickListener {
-                viewModel.onclickProject(findNavController())
+                viewModel.onClickProject(findNavController())
             }
 
             fabAddTask.setOnClickListener {
-                viewModel.onclickAddTask()
+                viewModel.onClickAddTask()
 //                findNavController().navigate(R.id.action_tasksFragment_to_addEditFragment)
             }
 
@@ -150,7 +151,6 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 //                        val action = TasksFragmentDirections.actionTasksFragmentToProjectsFragment()
 //                        findNavController().navigate(action)
 //                    }
-                    is TasksViewModel.TasksEvent.NavigateToAddEditFragment -> TODO()
                     is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
@@ -158,6 +158,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                         val action = TasksFragmentDirections.actionTasksFragmentToTimerFragment(event.task)
                         findNavController().navigate(action)
                     }
+                    is TasksViewModel.TasksEvent.RefreshTasks -> {}
                 }.exhaustive // to check that all cases are covered. It's a compiler check (compile safety)
             }
         }

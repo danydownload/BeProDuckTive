@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -15,7 +16,9 @@ import com.example.beproducktive.R
 import com.example.beproducktive.databinding.FragmentTasksBinding
 import com.example.beproducktive.databinding.ItemTaskBinding
 import com.example.beproducktive.ui.addedittasks.TaskSource
+import com.example.beproducktive.utils.exhaustive
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class TasksFragment : Fragment(R.layout.fragment_tasks) {
@@ -33,10 +36,11 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
 //            findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(task))
-            findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(projectName = projectName, task = task, taskSource = TaskSource.FROM_TASK_VIEW))
-
+            viewModel.onTaskSelected(projectName, task)
+//            findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToAddEditFragment(projectName = projectName, task = task, taskSource = TaskSource.FROM_TASK_VIEW))
         }, TasksAdapter.OnTimerClickListener { task ->
-            findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToTimerFragment(task))
+            viewModel.onTimerSelected(task)
+//            findNavController().safeNavigate(TasksFragmentDirections.actionTasksFragmentToTimerFragment(task))
         })
 
 
@@ -53,7 +57,8 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
             }
 
             fabAddTask.setOnClickListener {
-                findNavController().navigate(R.id.action_tasksFragment_to_addEditFragment)
+                viewModel.onclickAddTask()
+//                findNavController().navigate(R.id.action_tasksFragment_to_addEditFragment)
             }
 
         }
@@ -112,6 +117,40 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.tasksEvent.collect() { event ->
+                when (event) {
+                    is TasksViewModel.TasksEvent.NavigateToAddTaskScreen -> {
+                        val action = TasksFragmentDirections.actionTasksFragmentToAddEditFragment(projectName = null, task = null, taskSource = TaskSource.FROM_TASK_VIEW)
+                        findNavController().navigate(action)
+                    }
+                    is TasksViewModel.TasksEvent.NavigateToEditTaskScreen -> {
+                        val action = TasksFragmentDirections.actionTasksFragmentToAddEditFragment(projectName = event.projectName, task = event.task, taskSource = TaskSource.FROM_TASK_VIEW)
+                        findNavController().navigate(action)
+                    }
+//                    is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
+//                        Toast.makeText(requireContext(), event.msg, Toast.LENGTH_SHORT).show()
+//                    }
+//                    is TasksViewModel.TasksEvent.NavigateToTimerScreen -> {
+//                        val action = TasksFragmentDirections.actionTasksFragmentToTimerFragment(event.task)
+//                        findNavController().navigate(action)
+//                    }
+//                    is TasksViewModel.TasksEvent.NavigateToProjectScreen -> {
+//                        val action = TasksFragmentDirections.actionTasksFragmentToProjectsFragment()
+//                        findNavController().navigate(action)
+//                    }
+                    is TasksViewModel.TasksEvent.NavigateToAddEditFragment -> TODO()
+                    is TasksViewModel.TasksEvent.ShowToast -> TODO()
+                    is TasksViewModel.TasksEvent.NavigateToTimerFragment -> {
+                        val action = TasksFragmentDirections.actionTasksFragmentToTimerFragment(event.task)
+                        findNavController().navigate(action)
+                    }
+                }.exhaustive // to check that all cases are covered. It's a compiler check (compile safety)
+            }
+        }
+
+
     }
 
     fun NavController.safeNavigate(direction: NavDirections) {

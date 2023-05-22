@@ -10,12 +10,17 @@ import com.example.beproducktive.data.projects.ProjectRepository
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskDao
 import com.example.beproducktive.data.tasks.TaskRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
+    private val state: SavedStateHandle,
     private val taskRepository: TaskRepository,
     private val projectRepository: ProjectRepository
 ) : ViewModel() {
@@ -45,6 +50,9 @@ class TasksViewModel @Inject constructor(
         }
     }
 
+    private val _tasksEventChannel = Channel<TasksEvent>()
+    val tasksEvent = _tasksEventChannel.receiveAsFlow()
+
 
     private fun emitTasksByProjectName(projectName: String) = liveData {
         projectRepository.getByProjectName(projectName).collect {
@@ -67,5 +75,35 @@ class TasksViewModel @Inject constructor(
 
     fun onReceiveProject(projectName: String) =
         emitTasksByProjectName(projectName)
+
+
+    fun onTaskSelected(projectName: String, task: Task) = viewModelScope.launch {
+        _tasksEventChannel.send(TasksEvent.NavigateToEditTaskScreen(projectName, task))
+    }
+
+    fun onclickAddTask() = viewModelScope.launch {
+        _tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
+    }
+
+    fun onTimerSelected(task: Task) = viewModelScope.launch {
+        _tasksEventChannel.send(TasksEvent.NavigateToTimerFragment(task))
+    }
+
+
+
+
+    sealed class TasksEvent {
+
+        object NavigateToAddTaskScreen : TasksEvent()
+        data class NavigateToEditTaskScreen(val projectName: String, val task: Task) : TasksEvent()
+
+        data class ShowToast(val message: String) : TasksEvent()
+        data class NavigateToAddEditFragment(val projectName: String, val task: Task) : TasksEvent()
+        data class NavigateToTimerFragment(val task: Task) : TasksEvent()
+
+
+
+
+    }
 
 }

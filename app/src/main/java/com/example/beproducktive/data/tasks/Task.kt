@@ -25,7 +25,7 @@ data class Task(
     val belongsToProject: String,
     val deadline: Date? = Date(),
     val description: String? = null,
-    @PrimaryKey(autoGenerate = true) val taskId: Int = 0
+    @PrimaryKey(autoGenerate = true) var taskId: Int = 0
 ) : Parcelable {
     val deadlineFormatted: String
         get() = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).format(deadline!!)

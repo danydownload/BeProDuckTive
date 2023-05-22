@@ -71,134 +71,61 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
             )
             spinnerTaskPriority.adapter = sp1Adapter
 
-        }
 
+            viewModel.projects.observe(viewLifecycleOwner) { projects ->
+                projectNames = projects.map { it.projectName }
+                val sp2Adapter = CustomArrayAdapter(
+                    requireContext(),
+                    projectNames
+                )
 
-        val bundle = arguments
-        if (bundle == null) {
-            Log.e("Tasks", "AddEditTasksFragment did not receive task information")
-        } else {
-            Log.e("Tasks", "AddEditTasksFragment did receive task information")
+                spinnerProject.adapter = sp2Adapter
 
-            val args = AddEditFragmentArgs.fromBundle(bundle)
-
-            val taskSource = args.taskSource
-
-            args.task?.let { task ->
-                Log.d("CIAO-PP", task.taskTitle)
-
-                binding.apply {
-
-                    editTextTitle.setText(task.taskTitle)
-                    editTextDescription.setText(task.description)
-                    textViewTextDeadline.text = task.deadlineFormatted
-
-                    // Set the spinner's selection to the task's priority
-                    spinnerTaskPriority.setSelection(task.priority.ordinal)
-
-                    viewModel.projects.observe(viewLifecycleOwner) { projects ->
-                        projectNames = projects.map { it.projectName }
-                        val sp2Adapter = CustomArrayAdapter(
-                            requireContext(),
-                            projectNames
-                        )
-
-                        spinnerProject.adapter = sp2Adapter
-
-                        val index = projectNames.indexOf(args.projectName)
-                        if (index >= 0) {
-                            spinnerProject.setSelection(index)
-                        }
-
-                    }
-
-
-                    fabAddTask.setOnClickListener {
-
-                        val newTitle = editTextTitle.text.toString()
-                        val newDescription = editTextDescription.text?.toString() ?: ""
-                        val newDeadline = textViewTextDeadline.text.toString()
-                        val newPriority = spinnerTaskPriority.selectedItem.toString()
-                        val newProject = spinnerProject.selectedItem.toString()
-
-                        val newTask = Task(
-                            taskTitle = newTitle,
-                            completed = task.completed,
-                            priority = TaskPriority.valueOf(newPriority),
-                            deadline = Converters.stringToDate(newDeadline),
-                            description = newDescription,
-                            belongsToProject = newProject,
-                            taskId = task.taskId
-                        )
-
-                        viewModel.editTask(newTask)
-
-                        if (taskSource == TaskSource.FROM_DAILY_VIEW) {
-                            findNavController().navigate(R.id.action_addEditFragment_to_dailyViewTasksFragment)
-                        } else if (taskSource == TaskSource.FROM_TASK_VIEW) {
-                            findNavController().navigate(R.id.action_addEditFragment_to_tasksFragment)
-                        }
-
-                    }
-
-
+                val index = projectNames.indexOf(viewModel.taskProject)
+                if (index >= 0) {
+                    spinnerProject.setSelection(index)
                 }
-            } ?: run {
-                Log.e("Tasks", "AddEditTasksFragment task received is null")
-
-                binding.apply {
-
-                    spinnerTaskPriority.setSelection(0)
-
-                    viewModel.projects.observe(viewLifecycleOwner) { projects ->
-                        projectNames = projects.map { it.projectName }
-                        val sp2Adapter = CustomArrayAdapter(
-                            requireContext(),
-                            projectNames
-                        )
-
-                        spinnerProject.adapter = sp2Adapter
-                        spinnerProject.setSelection(0)
-                    }
 
 
-                    fabAddTask.setOnClickListener {
+                editTextTitle.setText(viewModel.taskName)
+                editTextDescription.setText(viewModel.taskDescription)
+                textViewTextDeadline.text = viewModel.taskDeadlineFormatted
+                val priorityOrdinal = viewModel.task?.priority?.ordinal ?: 0
+                spinnerTaskPriority.setSelection(priorityOrdinal)
 
-                        val newTitle = editTextTitle.text.toString()
-                        val newDescription = editTextDescription.text?.toString() ?: ""
-                        val newDeadline = textViewTextDeadline.text.toString()
-                        val newPriority = spinnerTaskPriority.selectedItem.toString()
-                        val newProject = spinnerProject.selectedItem.toString()
+                fabAddTask.setOnClickListener {
+                    val newTitle = editTextTitle.text.toString()
+                    val newDescription = editTextDescription.text?.toString() ?: ""
+                    val newDeadline = textViewTextDeadline.text.toString()
+                    val newPriority = spinnerTaskPriority.selectedItem.toString()
+                    val newProject = spinnerProject.selectedItem.toString()
 
-                        val newTask = Task(
-                            taskTitle = newTitle,
-                            completed = false,
-                            priority = TaskPriority.valueOf(newPriority),
-                            deadline = Converters.stringToDate(newDeadline),
-                            description = newDescription,
-                            belongsToProject = newProject
-                        )
+                    val newTask = Task(
+                        taskTitle = newTitle,
+                        completed = viewModel.task?.completed ?: false,
+                        priority = TaskPriority.valueOf(newPriority),
+                        deadline = Converters.stringToDate(newDeadline),
+                        description = newDescription,
+                        belongsToProject = newProject
+                    )
 
+                    if (viewModel.task != null) {
+                        // Existing task, update it
+                        newTask.taskId = viewModel.task!!.taskId
+                        viewModel.editTask(newTask)
+                    } else {
+                        // New task, add it
                         viewModel.addTask(newTask)
-
-                        if (taskSource == TaskSource.FROM_DAILY_VIEW) {
-                            findNavController().navigate(R.id.action_addEditFragment_to_dailyViewTasksFragment)
-                        } else if (taskSource == TaskSource.FROM_TASK_VIEW) {
-                            findNavController().navigate(R.id.action_addEditFragment_to_tasksFragment)
-                        }
-
-
                     }
+
+                    // Navigate back to the previous fragment
+                    findNavController().popBackStack()
 
 
                 }
 
 
             }
-
-
         }
     }
-
-
 }

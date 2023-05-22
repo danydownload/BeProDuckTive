@@ -3,19 +3,19 @@ package com.example.beproducktive.ui.addedittasks
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import android.widget.AdapterView
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.beproducktive.R
-import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskPriority
 import com.example.beproducktive.databinding.FragmentAddEditBinding
-import com.example.beproducktive.ui.tasks.TasksFragmentArgs
-import com.example.beproducktive.utils.Converters
+import com.example.beproducktive.utils.exhaustive
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -93,38 +93,80 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
                 val priorityOrdinal = viewModel.task?.priority?.ordinal ?: 0
                 spinnerTaskPriority.setSelection(priorityOrdinal)
 
-                fabAddTask.setOnClickListener {
-                    val newTitle = editTextTitle.text.toString()
-                    val newDescription = editTextDescription.text?.toString() ?: ""
-                    val newDeadline = textViewTextDeadline.text.toString()
-                    val newPriority = spinnerTaskPriority.selectedItem.toString()
-                    val newProject = spinnerProject.selectedItem.toString()
-
-                    val newTask = Task(
-                        taskTitle = newTitle,
-                        completed = viewModel.task?.completed ?: false,
-                        priority = TaskPriority.valueOf(newPriority),
-                        deadline = Converters.stringToDate(newDeadline),
-                        description = newDescription,
-                        belongsToProject = newProject
-                    )
-
-                    if (viewModel.task != null) {
-                        // Existing task, update it
-                        newTask.taskId = viewModel.task!!.taskId
-                        viewModel.editTask(newTask)
-                    } else {
-                        // New task, add it
-                        viewModel.addTask(newTask)
-                    }
-
-                    // Navigate back to the previous fragment
-                    findNavController().popBackStack()
-
-
+                editTextTitle.addTextChangedListener {
+                    viewModel.taskName = it.toString()
                 }
 
+                editTextDescription.addTextChangedListener {
+                    viewModel.taskDescription = it.toString()
+                }
 
+                textViewTextDeadline.addTextChangedListener {
+                    viewModel.taskDeadlineFormatted = it.toString()
+                }
+
+                spinnerTaskPriority.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val selectedPriorityName = parent?.getItemAtPosition(position) as String
+                            val selectedPriority = TaskPriority.valueOf(selectedPriorityName)
+                            viewModel.taskPriority = selectedPriority
+                            // You can access the selected priority here and perform any necessary actions
+                            Log.d("Selected Priority", selectedPriority.name)
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                            // Handle the case when nothing is selected
+                        }
+                    }
+
+                spinnerProject.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val selectedProjectName = parent?.getItemAtPosition(position) as String
+                            viewModel.taskProject = selectedProjectName
+                            // You can access the selected project name here and perform any necessary actions
+                            Log.d("Selected Project", selectedProjectName)
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                            // Handle the case when nothing is selected
+                        }
+                    }
+
+                fabAddTask.setOnClickListener {
+                    viewModel.onSaveClick()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.addEditTaskEvent.collect { event ->
+                when (event) {
+                    is AddEditViewModel.AddEditTaskEvent.ShowInvalidInputMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_LONG).show()
+                    }
+                    is AddEditViewModel.AddEditTaskEvent.NavigateBackWithResult -> {
+                        binding.editTextTitle.clearFocus()
+                        setFragmentResult(
+                            "add_edit_request",
+                            Bundle().apply {
+                                putInt("add_edit_result", event.result)
+                            }
+                        )
+                        findNavController().popBackStack()
+                    }
+                }.exhaustive
             }
         }
     }

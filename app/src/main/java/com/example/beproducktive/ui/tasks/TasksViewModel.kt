@@ -10,6 +10,8 @@ import com.example.beproducktive.data.projects.ProjectRepository
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskDao
 import com.example.beproducktive.data.tasks.TaskRepository
+import com.example.beproducktive.ui.ADD_TASK_RESULT_OK
+import com.example.beproducktive.ui.EDIT_TASK_RESULT_OK
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -89,17 +91,28 @@ class TasksViewModel @Inject constructor(
         _tasksEventChannel.send(TasksEvent.NavigateToTimerFragment(task))
     }
 
+    fun onAddEditResult(result: Int) {
+        Log.d("TasksViewModel", "onAddEditResult")
+        when (result) {
+            ADD_TASK_RESULT_OK -> showTaskSavedConfirmationMessage("Task added")
+            EDIT_TASK_RESULT_OK -> showTaskSavedConfirmationMessage("Task updated")
+        }
+    }
 
+    // we want to send an event to the fragment because only fragments can show snackbar
+    private fun showTaskSavedConfirmationMessage(text: String) = viewModelScope.launch {
+        Log.d("TasksViewModel", "showTaskSavedConfirmationMessage")
+        _tasksEventChannel.send(TasksEvent.ShowTaskSavedConfirmationMessage(text))
+    }
 
 
     sealed class TasksEvent {
 
         object NavigateToAddTaskScreen : TasksEvent()
         data class NavigateToEditTaskScreen(val projectName: String, val task: Task) : TasksEvent()
-
-        data class ShowToast(val message: String) : TasksEvent()
         data class NavigateToAddEditFragment(val projectName: String, val task: Task) : TasksEvent()
         data class NavigateToTimerFragment(val task: Task) : TasksEvent()
+        data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
 
 
 

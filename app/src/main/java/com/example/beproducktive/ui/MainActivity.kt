@@ -1,6 +1,7 @@
 package com.example.beproducktive.ui
 
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -186,6 +187,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         LocalBroadcastManager.getInstance(this).unregisterReceiver(isTimerStartedReceiver)
     }
 
-
-
 }
+
+const val ADD_TASK_RESULT_OK = Activity.RESULT_FIRST_USER
+const val EDIT_TASK_RESULT_OK = Activity.RESULT_FIRST_USER + 1

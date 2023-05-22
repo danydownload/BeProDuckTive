@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -17,6 +18,7 @@ import com.example.beproducktive.databinding.FragmentTasksBinding
 import com.example.beproducktive.databinding.ItemTaskBinding
 import com.example.beproducktive.ui.addedittasks.TaskSource
 import com.example.beproducktive.utils.exhaustive
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -76,6 +78,12 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 }
             }
 
+            setFragmentResultListener("add_edit_request") { _, bundle ->
+                Log.d("TasksFragment", "add_edit_request")
+                val result = bundle.getInt("add_edit_result")
+                viewModel.onAddEditResult(result)
+            }
+
             viewModel.tasks.observe(viewLifecycleOwner) { tasksList ->
                 taskAdapter.submitList(tasksList)
             }
@@ -112,6 +120,12 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                     }
                 }
 
+                setFragmentResultListener("add_edit_request") { _, bundle ->
+                    Log.d("TasksFragment", "add_edit_request")
+                    val result = bundle.getInt("add_edit_result")
+                    viewModel.onAddEditResult(result)
+                }
+
                 viewModel.tasks.observe(viewLifecycleOwner) { tasksList ->
                     taskAdapter.submitList(tasksList)
                 }
@@ -132,16 +146,14 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 //                    is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
 //                        Toast.makeText(requireContext(), event.msg, Toast.LENGTH_SHORT).show()
 //                    }
-//                    is TasksViewModel.TasksEvent.NavigateToTimerScreen -> {
-//                        val action = TasksFragmentDirections.actionTasksFragmentToTimerFragment(event.task)
-//                        findNavController().navigate(action)
-//                    }
 //                    is TasksViewModel.TasksEvent.NavigateToProjectScreen -> {
 //                        val action = TasksFragmentDirections.actionTasksFragmentToProjectsFragment()
 //                        findNavController().navigate(action)
 //                    }
                     is TasksViewModel.TasksEvent.NavigateToAddEditFragment -> TODO()
-                    is TasksViewModel.TasksEvent.ShowToast -> TODO()
+                    is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
+                    }
                     is TasksViewModel.TasksEvent.NavigateToTimerFragment -> {
                         val action = TasksFragmentDirections.actionTasksFragmentToTimerFragment(event.task)
                         findNavController().navigate(action)

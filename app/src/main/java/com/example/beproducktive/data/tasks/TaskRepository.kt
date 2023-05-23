@@ -9,8 +9,8 @@ class TaskRepository @Inject constructor(
     private val taskDao: TaskDao
 ) {
 
-    fun getTasks() : Flow<List<Task>> =
-        taskDao.getTasks()
+    fun getTasks(searchQuery: String) : Flow<List<Task>> =
+        taskDao.getTasks(searchQuery)
 
     fun getTasksByProjectName(projectName: String) : Flow<List<Task>> =
         taskDao.getTasksByProjectName(projectName)

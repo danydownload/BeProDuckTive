@@ -17,6 +17,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,7 +32,13 @@ class TasksViewModel @Inject constructor(
 
     val projects = projectRepository.getProjects().asLiveData()
 
-    val allTasks = taskRepository.getTasks().asLiveData()
+    val searchQuery = MutableStateFlow("")
+
+    private val tasksFlow = searchQuery.flatMapLatest {
+        taskRepository.getTasks(it)
+    }
+
+    val allTasks = tasksFlow.asLiveData()
 
     val firstProject = projectRepository.getFirstProject().asLiveData()
 
@@ -124,6 +132,15 @@ class TasksViewModel @Inject constructor(
         _tasksEventChannel.send(TasksEvent.NavigateToProjectScreen)
     }
 
+    fun onTaskSwiped(task: Task) = viewModelScope.launch {
+        taskRepository.delete(task)
+        _tasksEventChannel.send(TasksEvent.ShowUndoDeleteTaskMessage(task))
+        }
+
+    fun onUndoDeleteClick(task: Task) = viewModelScope.launch {
+        taskRepository.insert(task)
+    }
+
 
     sealed class TasksEvent {
 
@@ -133,6 +150,7 @@ class TasksViewModel @Inject constructor(
         data class NavigateToTimerFragment(val task: Task) : TasksEvent()
         data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
         data class RefreshTasks(val dateSelected: String) : TasksEvent()
+        data class ShowUndoDeleteTaskMessage(val task: Task) : TasksEvent()
 
 
     }

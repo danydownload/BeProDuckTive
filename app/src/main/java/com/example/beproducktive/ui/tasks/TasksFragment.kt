@@ -2,9 +2,15 @@ package com.example.beproducktive.ui.tasks
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -12,12 +18,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beproducktive.R
 import com.example.beproducktive.databinding.FragmentTasksBinding
 import com.example.beproducktive.databinding.ItemTaskBinding
 import com.example.beproducktive.ui.addedittasks.TaskSource
 import com.example.beproducktive.utils.exhaustive
+import com.example.beproducktive.utils.onQueryTextChanged
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -28,8 +36,11 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
     private val viewModel: TasksViewModel by viewModels()
 
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupMenu()
 
         val binding = FragmentTasksBinding.bind(view)
 
@@ -46,6 +57,28 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 layoutManager = LinearLayoutManager(requireContext())
                 setHasFixedSize(true)
             }
+
+            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            ) {
+
+                override fun onMove(
+                    recyclerView: androidx.recyclerview.widget.RecyclerView,
+                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                    target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(
+                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                    direction: Int
+                ) {
+                    val task = taskAdapter.currentList[viewHolder.adapterPosition]
+                    viewModel.onTaskSwiped(task)
+                }
+            }).attachToRecyclerView(recyclerViewTasks)
 
             cardView.setOnClickListener {
                 viewModel.onProjectClicked()
@@ -119,8 +152,59 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                         findNavController().navigate(action)
                     }
                     is TasksViewModel.TasksEvent.RefreshTasks -> {}
+                    is TasksViewModel.TasksEvent.ShowUndoDeleteTaskMessage -> {
+                        Snackbar.make(requireView(), "Task deleted", Snackbar.LENGTH_LONG)
+                            .setAction("UNDO") {
+                                viewModel.onUndoDeleteClick(event.task)
+                            }.show()
+                    }
                 }.exhaustive // to check that all cases are covered. It's a compiler check (compile safety)
             }
         }
     }
+
+
+    fun setupMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_fragment_tasks, menu)
+
+                val searchItem = menu.findItem(R.id.action_search)
+                val searchView = menu.findItem(R.id.action_search).actionView as androidx.appcompat.widget.SearchView
+
+                searchView.onQueryTextChanged {
+                    viewModel.searchQuery.value = it
+                }
+
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+                when (menuItem.itemId)
+                {
+                    R.id.action_sort_by_name -> {
+                        return true
+                    }
+                    R.id.action_sort_by_deadline -> {
+                        return true
+                    }
+                    R.id.action_sort_by_priority -> {
+
+                        return true
+                    }
+                    R.id.action_hide_completed_tasks -> {
+                        menuItem.isChecked = !menuItem.isChecked
+                        return true
+                    }
+                    R.id.action_delete_all_tasks -> {
+                        return true
+                    }
+                    else -> return false
+                }
+
+            }
+        })
+    }
+
 }

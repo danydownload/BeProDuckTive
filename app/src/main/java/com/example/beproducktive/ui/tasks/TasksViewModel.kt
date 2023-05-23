@@ -35,7 +35,7 @@ class TasksViewModel @Inject constructor(
     val searchQuery = MutableStateFlow("")
 
     private val tasksFlow = searchQuery.flatMapLatest {
-        taskRepository.getTasks(it)
+        taskRepository.getTasks(projectName, it)
     }
 
     val allTasks = tasksFlow.asLiveData()

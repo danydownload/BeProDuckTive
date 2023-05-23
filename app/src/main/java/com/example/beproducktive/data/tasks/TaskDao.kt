@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TaskDao {
 
-    @Query("SELECT * FROM task_table WHERE taskTitle LIKE '%' || :searchQuery || '%' ORDER BY CASE priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 END ASC")
-    fun getTasks(searchQuery: String): Flow<List<Task>>
+    @Query("SELECT * FROM task_table WHERE belongsToProject = :projectName AND taskTitle LIKE '%' || :searchQuery || '%' ORDER BY CASE priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 END ASC")
+    fun getTasks(projectName: String, searchQuery: String): Flow<List<Task>>
 
     @Query("SELECT * FROM task_table WHERE belongsToProject = :belongsToProject")
     fun getTasksByProjectName(belongsToProject: String) : Flow<List<Task>>

@@ -35,6 +35,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
     private val viewModel: TasksViewModel by viewModels()
 
+    private lateinit var menuProvider: MenuProvider
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,20 +105,28 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 viewModel.firstProject.observe(viewLifecycleOwner) { project ->
                     project?.let {
                         viewModel.projectName = it.projectName
-                        val list = viewModel.onReceiveProject(viewModel.projectName)
-                        list.observe(viewLifecycleOwner) { taskList ->
-                            taskAdapter.submitList(taskList)
+//                        val list = viewModel.onReceiveProject(viewModel.projectName)
+//                        list.observe(viewLifecycleOwner) { taskList ->
+//                            taskAdapter.submitList(taskList)
+//                        }
+                        viewModel.allTasks.observe(viewLifecycleOwner) { listTasks ->
+                            taskAdapter.submitList(listTasks)
                         }
                     }
                     textviewProjectName.text = viewModel.projectName.uppercase()
                 }
             } else {
                 textviewProjectName.text = viewModel.projectName.uppercase()
-                val list = viewModel.onReceiveProject(viewModel.projectName)
-                list.observe(viewLifecycleOwner) { taskList ->
-                    taskAdapter.submitList(taskList)
+//                val list = viewModel.onReceiveProject(viewModel.projectName)
+//                list.observe(viewLifecycleOwner) { taskList ->
+//                    taskAdapter.submitList(taskList)
+//                }
+                viewModel.allTasks.observe(viewLifecycleOwner) { listTasks ->
+                    taskAdapter.submitList(listTasks)
                 }
             }
+
+
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -165,7 +174,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
 
     fun setupMenu() {
-        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+        val currentMenuProvider = object : MenuProvider {
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_fragment_tasks, menu)
@@ -202,9 +211,22 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                     }
                     else -> return false
                 }
-
             }
-        })
+        }
+        menuProvider = currentMenuProvider
+        (requireActivity() as MenuHost).addMenuProvider(currentMenuProvider)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+    }
+
+
 
 }

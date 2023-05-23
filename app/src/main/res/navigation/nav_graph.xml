@@ -36,8 +36,8 @@
             android:id="@+id/action_projectsFragment_to_tasksFragment"
             app:destination="@id/tasksFragment" />
         <action
-            android:id="@+id/action_projectsFragment_to_addProjectFragment"
-            app:destination="@id/addProjectFragment" />
+            android:id="@+id/action_projectsFragment_self"
+            app:destination="@id/projectsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addEditFragment"
@@ -79,11 +79,6 @@
             android:id="@+id/action_dailyViewTasksFragment_to_timerFragment"
             app:destination="@id/timerFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/addProjectFragment"
-        android:name="com.example.beproducktive.ui.projects.AddProjectFragment"
-        android:label="fragment_add_project"
-        tools:layout="@layout/fragment_add_project" />
     <fragment
         android:id="@+id/timerFragment"
         android:name="com.example.beproducktive.ui.timer.TimerFragment"

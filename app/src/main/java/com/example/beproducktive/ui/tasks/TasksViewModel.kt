@@ -19,10 +19,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,6 +40,13 @@ class TasksViewModel @Inject constructor(
     val sortOrder = MutableStateFlow(SortOrder.BY_DEADLINE)
     val hideCompleted = MutableStateFlow(false)
 
+    private val _deadline =  MutableStateFlow("")
+    val deadline: StateFlow<String> = _deadline
+
+    fun setDeadline(deadline: String) {
+        _deadline.value = deadline
+    }
+
     private val tasksFlow = combine(
         searchQuery,
         preferencesFlow,
@@ -53,6 +57,18 @@ class TasksViewModel @Inject constructor(
     }
 
     val allTasks = tasksFlow.asLiveData()
+
+    private val tasksByDeadlineFlow = combine(
+        searchQuery,
+        preferencesFlow,
+        deadline
+    ) { query, filterPreferences, deadlineValue  ->
+        Triple(query, filterPreferences, deadlineValue )
+    }.flatMapLatest {(query, filterPreferences, deadlineValue ) ->
+        taskRepository.getTasksByDeadline(deadlineValue, query, filterPreferences.hideCompleted)
+    }
+
+    val allTasksByDeadline = tasksByDeadlineFlow.asLiveData()
 
     val firstProject = projectRepository.getFirstProject().asLiveData()
 
@@ -89,12 +105,12 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    fun getTasksForDate(date: String?) = taskRepository.getTasksByDeadline(date!!).asLiveData()
+    fun getTasksForDate(date: String?) = taskRepository.getTasksByDeadline(date!!, "", true).asLiveData()
 
     fun getProjectNameForTask(taskId: Int) =
         taskRepository.getProjectNameForTask(taskId).asLiveData()
 
-    fun tasksOrderedByPriority(projectAndTasks: ProjectAndTasks): List<Task> =
+    private fun tasksOrderedByPriority(projectAndTasks: ProjectAndTasks): List<Task> =
         projectAndTasks.tasks.sortedByDescending { it.priority }
 
     fun tasksOrderedByDeadline(projectAndTasks: ProjectAndTasks): List<Task> =
@@ -168,16 +184,23 @@ class TasksViewModel @Inject constructor(
         taskRepository.update(task.copy(completed = checked))
     }
 
+    fun onDeleteAllCompletedClick() = viewModelScope.launch {
+        _tasksEventChannel.send(TasksEvent.NavigateToDeleteAllCompletedScreen)
+    }
+
 
     sealed class TasksEvent {
 
         object NavigateToAddTaskScreen : TasksEvent()
         object NavigateToProjectScreen : TasksEvent()
+
+        object NavigateToDeleteAllCompletedScreen : TasksEvent()
         data class NavigateToEditTaskScreen(val projectName: String, val task: Task) : TasksEvent()
         data class NavigateToTimerFragment(val task: Task) : TasksEvent()
         data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
         data class RefreshTasks(val dateSelected: String) : TasksEvent()
         data class ShowUndoDeleteTaskMessage(val task: Task) : TasksEvent()
+
 
 
 

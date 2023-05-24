@@ -33,7 +33,8 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
     private val viewModel: TasksViewModel by viewModels()
 
-    private lateinit var menuProvider: MenuProvider
+    private var menuProvider: MenuProvider? = null
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -167,6 +168,10 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                                 viewModel.onUndoDeleteClick(event.task)
                             }.show()
                     }
+                    TasksViewModel.TasksEvent.NavigateToDeleteAllCompletedScreen ->  {
+                        val action = TasksFragmentDirections.actionGlobalDeleteAllCompletedDialogFragment()
+                        findNavController().navigate(action)
+                    }
                 }.exhaustive // to check that all cases are covered. It's a compiler check (compile safety)
             }
         }
@@ -210,6 +215,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                         return true
                     }
                     R.id.action_delete_all_tasks -> {
+                        viewModel.onDeleteAllCompletedClick()
                         return true
                     }
                     else -> return false
@@ -222,12 +228,12 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
     override fun onDestroy() {
         super.onDestroy()
-        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+        menuProvider?.let { (requireActivity() as MenuHost).removeMenuProvider(it) }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+        menuProvider?.let { (requireActivity() as MenuHost).removeMenuProvider(it) }
     }
 
 

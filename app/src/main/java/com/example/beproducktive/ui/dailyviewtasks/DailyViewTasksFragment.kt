@@ -30,6 +30,7 @@ import com.example.beproducktive.data.calendar.MyCalendarData
 import com.example.beproducktive.databinding.FragmentDailyViewTasksBinding
 import com.example.beproducktive.ui.addedittasks.TaskSource
 import com.example.beproducktive.ui.tasks.TasksAdapter
+import com.example.beproducktive.ui.tasks.TasksFragmentDirections
 import com.example.beproducktive.ui.tasks.TasksViewModel
 import com.example.beproducktive.utils.onQueryTextChanged
 import com.google.android.material.snackbar.Snackbar
@@ -49,7 +50,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
     private lateinit var recyclerViewTasks2: RecyclerView
     private lateinit var mLayoutManager: LinearLayoutManager
-    private lateinit var menuProvider: MenuProvider
+    private var menuProvider: MenuProvider? = null
 
 
 
@@ -139,7 +140,8 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                     }
                 }
 
-                viewModel.onDayClicked(dateSelected!!)
+                viewModel.setDeadline(dateSelected!!)
+                viewModel.onDayClicked(dateSelected)
 
             })
 
@@ -194,8 +196,9 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             println("Current date: $currentDate")
 
 
-            // TODO change this to support ordering by name, multiple projects
-            viewModel.getTasksForDate(currentDate).observe(viewLifecycleOwner) { tasksList ->
+            viewModel.setDeadline(currentDate)
+            Log.d("TasksFragment", "deadline: ${viewModel.deadline}")
+            viewModel.allTasksByDeadline.observe(viewLifecycleOwner) { tasksList ->
                 taskAdapter.submitList(tasksList)
             }
 
@@ -231,7 +234,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
                     is TasksViewModel.TasksEvent.RefreshTasks -> {
-                        viewModel.getTasksForDate(event.dateSelected).observe(viewLifecycleOwner) { tasksList ->
+                        viewModel.allTasksByDeadline.observe(viewLifecycleOwner) { tasksList ->
                             taskAdapter.submitList(tasksList)
                         }
                     }
@@ -241,6 +244,10 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                             .setAction("UNDO") {
                                 viewModel.onUndoDeleteClick(event.task)
                             }.show()
+                    }
+                    TasksViewModel.TasksEvent.NavigateToDeleteAllCompletedScreen -> {
+                        val action = TasksFragmentDirections.actionGlobalDeleteAllCompletedDialogFragment()
+                        findNavController().navigate(action)
                     }
                 }
             }
@@ -325,6 +332,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                         true
                     }
                     R.id.action_delete_all_tasks -> {
+                        viewModel.onDeleteAllCompletedClick()
                         true
                     }
                     else -> false
@@ -337,12 +345,12 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
     override fun onDestroy() {
         super.onDestroy()
-        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+        menuProvider?.let { (requireActivity() as MenuHost).removeMenuProvider(it) }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+        menuProvider?.let { (requireActivity() as MenuHost).removeMenuProvider(it) }
     }
 
 

@@ -37,8 +37,14 @@ interface TaskDao {
     @Delete
     suspend fun delete(task: Task)
 
-    @Query("SELECT * FROM task_table WHERE deadline = :deadlineString ORDER BY CASE priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 END ASC")
-    fun getTasksByDeadline(deadlineString: String): Flow<List<Task>>
+//    @Query("SELECT * FROM task_table WHERE deadline = :deadlineString ORDER BY CASE priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 END ASC")
+//    fun getTasksByDeadline(deadlineString: String): Flow<List<Task>>
+
+    @Query("SELECT * FROM task_table WHERE deadline = :deadlineString AND (completed != :hideCompleted OR completed = 0) AND taskTitle LIKE '%' || :searchQuery || '%' ORDER BY CASE priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 END ASC, taskTitle")
+    fun getTasksByDeadline(deadlineString: String, searchQuery: String, hideCompleted: Boolean): Flow<List<Task>>
+
+    @Query("DELETE FROM task_table WHERE completed = 1")
+    fun deleteCompletedTasks()
 
 
     @Query("SELECT projectName FROM project_table INNER JOIN task_table ON project_table.projectName = task_table.belongsToProject WHERE taskId = :taskId")

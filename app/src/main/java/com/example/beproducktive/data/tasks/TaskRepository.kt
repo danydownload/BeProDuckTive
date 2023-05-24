@@ -19,6 +19,9 @@ class TaskRepository @Inject constructor(
     fun getTasksSortedByDeadline(projectName: String, searchQuery: String, hideCompleted: Boolean) : Flow<List<Task>> =
         taskDao.getTasksSortedByDeadline(projectName, searchQuery, hideCompleted)
 
+    fun getTasksByDeadline(deadlineString: String, searchQuery: String, hideCompleted: Boolean) : Flow<List<Task>> =
+        taskDao.getTasksByDeadline(deadlineString, searchQuery, hideCompleted)
+
     fun getTasksByProjectName(projectName: String) : Flow<List<Task>> =
         taskDao.getTasksByProjectName(projectName)
 
@@ -37,14 +40,14 @@ class TaskRepository @Inject constructor(
         taskDao.delete(task)
     }
 
-    fun getTasksByDeadline(deadlineString: String) : Flow<List<Task>> =
-        taskDao.getTasksByDeadline(deadlineString)
-
     fun getProjectNameForTask(taskId: Int) : Flow<String> =
         taskDao.getProjectNameForTask(taskId)
 
     fun deleteAllTasks() =
         taskDao.deleteAllTasks()
+
+    fun deleteCompletedTasks() =
+        taskDao.deleteCompletedTasks()
 
 //    fun editTask(taskId: Int, title: String, description: String, deadline: String, priority: String, projectId: Int) {
 //        taskDao.editTask(taskId, title, description, deadline, priority, projectId)

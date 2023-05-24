@@ -34,18 +34,6 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="addProjectFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="578" />
-                            <option name="y" value="-111" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
                   <entry key="dailyViewTasksFragment">
                     <value>
                       <LayoutPositions>
@@ -67,7 +55,24 @@
                                 <LayoutPositions />
                               </value>
                             </entry>
+                            <entry key="action_dailyViewTasksFragment_to_timerFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                           </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="deleteAllCompletedDialogFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-145" />
+                            <option name="y" value="-602" />
+                          </Point>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -83,12 +88,12 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_projectsFragment_to_addEditFragment">
+                            <entry key="action_projectsFragment_self">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_projectsFragment_to_addProjectFragment">
+                            <entry key="action_projectsFragment_to_addEditFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -120,6 +125,11 @@
                               </value>
                             </entry>
                             <entry key="action_tasksFragment_to_projectsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_tasksFragment_to_timerFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

@@ -1,5 +1,6 @@
 package com.example.beproducktive.data.tasks
 
+import com.example.beproducktive.data.SortOrder
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -9,8 +10,14 @@ class TaskRepository @Inject constructor(
     private val taskDao: TaskDao
 ) {
 
-    fun getTasks(projectName: String, searchQuery: String) : Flow<List<Task>> =
-        taskDao.getTasks(projectName, searchQuery)
+    fun getTasks(projectName: String, query: String, sortOrder: SortOrder, hideCompleted: Boolean) : Flow<List<Task>> =
+        taskDao.getTasks(projectName, query, sortOrder, hideCompleted)
+
+    fun getTasksSortedByName(projectName: String, searchQuery: String, hideCompleted: Boolean) : Flow<List<Task>> =
+        taskDao.getTasksSortedByName(projectName, searchQuery, hideCompleted)
+
+    fun getTasksSortedByDeadline(projectName: String, searchQuery: String, hideCompleted: Boolean) : Flow<List<Task>> =
+        taskDao.getTasksSortedByDeadline(projectName, searchQuery, hideCompleted)
 
     fun getTasksByProjectName(projectName: String) : Flow<List<Task>> =
         taskDao.getTasksByProjectName(projectName)

@@ -1,9 +1,8 @@
 package com.example.beproducktive.ui.tasks
 
 
-import android.media.Image
-import android.util.Log
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,7 +11,8 @@ import com.example.beproducktive.data.tasks.Task
 
 class TasksAdapter(
     private val onClickListener: OnClickListener,
-    private var onTimerClickListener: OnTimerClickListener,
+    private val onTimerClickListener: OnTimerClickListener,
+    private val onCheckboxClickListener: OnCheckboxClickListener,
 ) : ListAdapter<Task, TasksViewHolder>(TASKS_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksViewHolder =
@@ -27,6 +27,12 @@ class TasksAdapter(
 
         holder.itemView.findViewById<ImageView>(R.id.image_view_timer).setOnClickListener {
             onTimerClickListener.onTimerClick(currentItem)
+        }
+
+        val checkboxCompleted = holder.itemView.findViewById<CheckBox>(R.id.checkbox_completed)
+
+        checkboxCompleted.setOnClickListener {
+            onCheckboxClickListener.onCheckboxClick(currentItem, checkboxCompleted.isChecked)
         }
 
         holder.bind(currentItem)
@@ -49,6 +55,10 @@ class TasksAdapter(
 
     class OnTimerClickListener(val clickListener: (task: Task) -> Unit) {
         fun onTimerClick(task: Task) = clickListener(task)
+    }
+
+    class OnCheckboxClickListener(val clickListener: (task: Task, taskCompleted: Boolean) -> Unit) {
+        fun onCheckboxClick(task: Task, taskCompleted: Boolean) = clickListener(task, taskCompleted)
     }
 }
 

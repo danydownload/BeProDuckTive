@@ -16,8 +16,6 @@
         app:showAsAction="always" >
 
         <menu>
-            <item android:id="@+id/action_sort_by_priority"
-                android:title="Sort by priority" />
             <item
                 android:id="@+id/action_sort_by_deadline"
                 android:title="Sort by date" />

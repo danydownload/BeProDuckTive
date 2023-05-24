@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.navigation.NavController
 import com.example.beproducktive.R
+import com.example.beproducktive.data.PreferencesManager
+import com.example.beproducktive.data.SortOrder
 import com.example.beproducktive.data.projectandtasks.ProjectAndTasks
 import com.example.beproducktive.data.projects.Project
 import com.example.beproducktive.data.projects.ProjectDao
@@ -18,6 +20,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -27,15 +30,26 @@ import javax.inject.Inject
 class TasksViewModel @Inject constructor(
     private val state: SavedStateHandle,
     private val taskRepository: TaskRepository,
-    private val projectRepository: ProjectRepository
+    private val projectRepository: ProjectRepository,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     val projects = projectRepository.getProjects().asLiveData()
 
     val searchQuery = MutableStateFlow("")
 
-    private val tasksFlow = searchQuery.flatMapLatest {
-        taskRepository.getTasks(projectName, it)
+    val preferencesFlow = preferencesManager.preferencesFlow
+
+    val sortOrder = MutableStateFlow(SortOrder.BY_DEADLINE)
+    val hideCompleted = MutableStateFlow(false)
+
+    private val tasksFlow = combine(
+        searchQuery,
+        preferencesFlow,
+    ) { query, filterPreferences ->
+        Pair(query, filterPreferences)
+    }.flatMapLatest {(query, filterPreferences) ->
+        taskRepository.getTasks(projectName, query, filterPreferences.sortOrder, filterPreferences.hideCompleted)
     }
 
     val allTasks = tasksFlow.asLiveData()
@@ -94,6 +108,15 @@ class TasksViewModel @Inject constructor(
         emitTasksByProjectName(projectName)
 
 
+    fun onSortOrderSelected(sortOrder: SortOrder) = viewModelScope.launch {
+        preferencesManager.updateSortOrder(sortOrder)
+    }
+
+    fun onHideCompletedClick(hideCompleted: Boolean) = viewModelScope.launch {
+        preferencesManager.updateHideCompleted(hideCompleted)
+    }
+
+
     fun onTaskSelected(projectName: String, task: Task) = viewModelScope.launch {
         _tasksEventChannel.send(TasksEvent.NavigateToEditTaskScreen(projectName, task))
     }
@@ -141,6 +164,10 @@ class TasksViewModel @Inject constructor(
         taskRepository.insert(task)
     }
 
+    fun onCheckboxSelected(task: Task, checked: Boolean) = viewModelScope.launch {
+        taskRepository.update(task.copy(completed = checked))
+    }
+
 
     sealed class TasksEvent {
 
@@ -151,6 +178,7 @@ class TasksViewModel @Inject constructor(
         data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
         data class RefreshTasks(val dateSelected: String) : TasksEvent()
         data class ShowUndoDeleteTaskMessage(val task: Task) : TasksEvent()
+
 
 
     }

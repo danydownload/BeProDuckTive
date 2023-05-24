@@ -3,17 +3,20 @@ package com.example.beproducktive.ui.dailyviewtasks
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -21,18 +24,18 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beproducktive.R
+import com.example.beproducktive.data.SortOrder
 import com.example.beproducktive.data.calendar.MyCalendar
 import com.example.beproducktive.data.calendar.MyCalendarData
 import com.example.beproducktive.databinding.FragmentDailyViewTasksBinding
-import com.example.beproducktive.ui.addedittasks.AddEditViewModel
 import com.example.beproducktive.ui.addedittasks.TaskSource
 import com.example.beproducktive.ui.tasks.TasksAdapter
-import com.example.beproducktive.ui.tasks.TasksFragmentDirections
 import com.example.beproducktive.ui.tasks.TasksViewModel
-import com.example.beproducktive.utils.exhaustive
+import com.example.beproducktive.utils.onQueryTextChanged
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
@@ -46,12 +49,17 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
     private lateinit var recyclerViewTasks2: RecyclerView
     private lateinit var mLayoutManager: LinearLayoutManager
+    private lateinit var menuProvider: MenuProvider
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = FragmentDailyViewTasksBinding.bind(view)
+
+        setupMenu()
+
 
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
@@ -61,6 +69,11 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
         }, TasksAdapter.OnTimerClickListener { task ->
             viewModel.onTimerSelected(task)
+        }, TasksAdapter.OnCheckboxClickListener { task, isChecked ->
+            Log.d("TasksFragment", "Checkbox clicked: $isChecked")
+            Snackbar.make(requireView(), "Checkbox clicked: $isChecked", Snackbar.LENGTH_SHORT)
+                .show()
+            viewModel.onCheckboxSelected(task, isChecked)
         })
 
         recyclerViewTasks2 = binding.recyclerViewTasks2
@@ -180,6 +193,8 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             val currentDate = calendar.getCurrentDate()
             println("Current date: $currentDate")
 
+
+            // TODO change this to support ordering by name, multiple projects
             viewModel.getTasksForDate(currentDate).observe(viewLifecycleOwner) { tasksList ->
                 taskAdapter.submitList(tasksList)
             }
@@ -232,19 +247,6 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
         }
     }
 
-    private fun getCurrentItem(): Int {
-        return (recyclerViewTasks2.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-    }
-
-    private fun setCurrentItem(position: Int, incr: Int) {
-        var newPosition = position + incr
-
-        if (newPosition < 0) {
-            newPosition = 0
-        }
-
-        recyclerViewTasks2.smoothScrollToPosition(newPosition)
-    }
 
     /**
      * Prepares sample data to provide data set to adapter
@@ -284,5 +286,64 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
         mAdapter.notifyDataSetChanged()
 
     }
+
+    private fun setupMenu() {
+        val currentMenuProvider = object : MenuProvider {
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_fragment_tasks, menu)
+
+                val searchItem = menu.findItem(R.id.action_search)
+                val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+
+                searchView.onQueryTextChanged {
+                    viewModel.searchQuery.value = it
+                }
+
+                val sortItem = menu.findItem(R.id.action_sort)
+                sortItem.isVisible = false
+                sortItem.isEnabled = false
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    menu.findItem(R.id.action_hide_completed_tasks).isChecked =
+                        viewModel.preferencesFlow.first().hideCompleted
+                }
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+                return when (menuItem.itemId) {
+                    R.id.action_sort_by_name -> {
+                        true
+                    }
+                    R.id.action_sort_by_deadline -> {
+                        true
+                    }
+                    R.id.action_hide_completed_tasks -> {
+                        menuItem.isChecked = !menuItem.isChecked
+                        viewModel.onHideCompletedClick(menuItem.isChecked)
+                        true
+                    }
+                    R.id.action_delete_all_tasks -> {
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
+        menuProvider = currentMenuProvider
+        (requireActivity() as MenuHost).addMenuProvider(currentMenuProvider)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (requireActivity() as MenuHost).removeMenuProvider(menuProvider)
+    }
+
 
 }

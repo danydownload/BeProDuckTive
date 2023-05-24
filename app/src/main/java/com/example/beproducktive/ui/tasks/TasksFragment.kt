@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
@@ -15,20 +14,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.beproducktive.R
+import com.example.beproducktive.data.SortOrder
 import com.example.beproducktive.databinding.FragmentTasksBinding
-import com.example.beproducktive.databinding.ItemTaskBinding
 import com.example.beproducktive.ui.addedittasks.TaskSource
 import com.example.beproducktive.utils.exhaustive
 import com.example.beproducktive.utils.onQueryTextChanged
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TasksFragment : Fragment(R.layout.fragment_tasks) {
@@ -50,6 +48,8 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
             viewModel.onTaskSelected(viewModel.projectName, task)
         }, TasksAdapter.OnTimerClickListener { task ->
             viewModel.onTimerSelected(task)
+        }, TasksAdapter.OnCheckboxClickListener { task, isChecked ->
+            viewModel.onCheckboxSelected(task, isChecked)
         })
 
         binding.apply {
@@ -173,19 +173,23 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
     }
 
 
-    fun setupMenu() {
+    private fun setupMenu() {
         val currentMenuProvider = object : MenuProvider {
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_fragment_tasks, menu)
 
                 val searchItem = menu.findItem(R.id.action_search)
-                val searchView = menu.findItem(R.id.action_search).actionView as androidx.appcompat.widget.SearchView
+                val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
 
                 searchView.onQueryTextChanged {
                     viewModel.searchQuery.value = it
                 }
 
+                viewLifecycleOwner.lifecycleScope.launch {
+                    menu.findItem(R.id.action_hide_completed_tasks).isChecked =
+                            viewModel.preferencesFlow.first().hideCompleted
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -193,17 +197,16 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 when (menuItem.itemId)
                 {
                     R.id.action_sort_by_name -> {
+                        viewModel.onSortOrderSelected(SortOrder.BY_NAME)
                         return true
                     }
                     R.id.action_sort_by_deadline -> {
-                        return true
-                    }
-                    R.id.action_sort_by_priority -> {
-
+                        viewModel.onSortOrderSelected(SortOrder.BY_DEADLINE)
                         return true
                     }
                     R.id.action_hide_completed_tasks -> {
                         menuItem.isChecked = !menuItem.isChecked
+                        viewModel.onHideCompletedClick(menuItem.isChecked)
                         return true
                     }
                     R.id.action_delete_all_tasks -> {

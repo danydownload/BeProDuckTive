@@ -61,17 +61,15 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
         setupMenu()
 
-
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
             Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
 
-            Log.d("TASK-SELECTED", "task: $task")
             viewModel.onTaskSelected(task.belongsToProject, task)
 
         }, TasksAdapter.OnTimerClickListener { task ->
             viewModel.onTimerSelected(task)
         }, TasksAdapter.OnCheckboxClickListener { task, isChecked ->
-            Log.d("TasksFragment", "Checkbox clicked: $isChecked")
+//            Log.d("TasksFragment", "Checkbox clicked: $isChecked")
             Snackbar.make(requireView(), "Checkbox clicked: $isChecked", Snackbar.LENGTH_SHORT)
                 .show()
             viewModel.onCheckboxSelected(task, isChecked)
@@ -130,7 +128,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                 mAdapter.notifyItemChanged(calendarList.indexOf(calendar))
 
                 val dateSelected = calendar.getSelectedDate()
-                Log.d("SELECTED-DATE","$dateSelected is selected!")
+//                Log.d("SELECTED-DATE","$dateSelected is selected!")
 
                 // when a day is selected, all the other are unselected
                 for (i in calendarList.indices) {
@@ -193,11 +191,22 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
             val calendar = MyCalendar()
             val currentDate = calendar.getCurrentDate()
-            println("Current date: $currentDate")
 
 
-            viewModel.setDeadline(currentDate)
-            Log.d("TasksFragment", "deadline: ${viewModel.deadline}")
+            if (viewModel.isDeadlineNull()) {
+                viewModel.setDeadline(currentDate)
+            }
+
+
+            // set the actual deadline as selected
+            for (i in calendarList.indices) {
+                if (calendarList[i].getSelectedDate() == viewModel.deadline.value) {
+                    calendarList[i].isSelected = true
+                    mAdapter.notifyItemChanged(i)
+                }
+            }
+
+//            Log.d("TasksFragment", "deadline: ${viewModel.deadline}")
             viewModel.allTasksByDeadline.observe(viewLifecycleOwner) { tasksList ->
                 taskAdapter.submitList(tasksList)
             }
@@ -207,7 +216,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             }
 
             setFragmentResultListener("add_edit_request") { _, bundle ->
-                Log.d("TasksFragment", "add_edit_request")
+//                Log.d("TasksFragment", "add_edit_request")
                 val result = bundle.getInt("add_edit_result")
                 viewModel.onAddEditResult(result)
             }
@@ -285,7 +294,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
 
         }
 
-        Log.d("CALENDAR-SIZE", "Size of calendarList: ${calendarList.size}")
+//        Log.d("CALENDAR-SIZE", "Size of calendarList: ${calendarList.size}")
 
         // notify adapter about data set changes
         // so that it will render the list with new data

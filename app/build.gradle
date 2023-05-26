@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -55,6 +56,15 @@ dependencies {
     implementation "androidx.test.ext:junit-ktx:1.1.5"
     implementation "androidx.test:rules:1.5.0"
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    implementation 'com.google.firebase:firebase-auth-ktx:22.0.0'
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.facebook.android:facebook-android-sdk:16.0.1'
+
+
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test:core:1.5.0"
     androidTestImplementation "androidx.test.ext:junit:$testExtJunitVersion"

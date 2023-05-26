@@ -15,6 +15,7 @@ class ProjectsViewHolder (
         binding.apply {
             textviewProjectName.text = "Project: ${project.projectName}".uppercase()
         }
+
     }
 
     companion object {

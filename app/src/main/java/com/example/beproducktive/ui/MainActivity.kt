@@ -21,12 +21,15 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.example.beproducktive.R
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.ui.tasks.TasksFragmentDirections
+import com.example.beproducktive.ui.timer.TimerFragmentDirections
 import com.example.beproducktive.ui.timer.TimerService
 import com.example.beproducktive.ui.timer.TimerSharedViewModel
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -67,6 +70,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    private var isPausedStartedReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == TimerService.ACTION_PAUSE_STARTED) {
+                val isTimePaused = intent.getBooleanExtra(TimerService.PAUSE_STARTED, false)
+                sharedViewModel.updateIsPauseStarted(isTimePaused)
+            }
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,17 +88,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val task = intent.getParcelableExtra<Task>("task")
 //            val task = intent.getBundleExtra("task")
             if (task != null) {
-                Log.d("TaskId ", "MainActivity: task: ${task.taskId}")
-                navigateToTimerFragment(task)
+//                navigateToTimerFragment(task)
+                sharedViewModel.updateTask(task)
+                sharedViewModel.updateDestination("TIMER FRAGMENT")
             } else {
                 Log.d("TaskId ", "MainActivity: Task object is null")
-                // Handle the case when the "task" extra is null
             }
         }
 
-//        Log.d("ViewModel", "MainActivity ViewModel: $sharedViewModel")
 
-
+        // same as below but with TIMER_TASK_FINISHED
+        if (intent?.action == "TIMER_TASK_FINISHED") {
+            val task = intent.getParcelableExtra<Task>("task")
+            if (task != null) {
+                sharedViewModel.updateTaskCompleted(task)
+            } else {
+                Log.d("TaskId ", "MainActivity: Task object is null")
+            }
+        }
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
@@ -116,12 +134,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    private fun navigateToTimerFragment(task: Task) {
-        val bundle = bundleOf("task" to task)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        navController.navigate(R.id.timerFragment, bundle)
-    }
+//    private fun navigateToTimerFragment(task: Task) {
+//        val bundle = bundleOf("task" to task)
+//        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+//        val navController = navHostFragment.navController
+//        navController.navigate(R.id.loginFragment, bundle)
+//    }
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -129,7 +147,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_daily_view -> findNavController(R.id.nav_host_fragment).navigate(R.id.dailyViewTasksFragment)
             R.id.nav_tasks_view -> findNavController(R.id.nav_host_fragment).navigate(R.id.tasksFragment)
             R.id.nav_projects_view -> findNavController(R.id.nav_host_fragment).navigate(R.id.projectsFragment)
-            R.id.nav_logout -> Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show()
+            R.id.nav_logout -> {
+                FirebaseAuth.getInstance().signOut()
+                findNavController(R.id.nav_host_fragment).navigate(R.id.loginFragment)
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
@@ -151,6 +172,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isTimerStartedReceiver,
             IntentFilter(TimerService.ACTION_TIMER_STARTED))
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            isPausedStartedReceiver,
+            IntentFilter(TimerService.ACTION_PAUSE_STARTED))
+
     }
 
     override fun onStart() {
@@ -169,6 +195,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isTimerStartedReceiver,
             IntentFilter(TimerService.ACTION_TIMER_STARTED))
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            isPausedStartedReceiver,
+            IntentFilter(TimerService.ACTION_PAUSE_STARTED))
+
     }
 
     override fun onStop() {
@@ -177,6 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         LocalBroadcastManager.getInstance(this).unregisterReceiver(timeUpdateReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(isTimerRunningReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(isTimerStartedReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(isPausedStartedReceiver)
     }
 
     override fun onDestroy() {
@@ -185,6 +217,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         LocalBroadcastManager.getInstance(this).unregisterReceiver(timeUpdateReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(isTimerRunningReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(isTimerStartedReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(isPausedStartedReceiver)
     }
 
 }

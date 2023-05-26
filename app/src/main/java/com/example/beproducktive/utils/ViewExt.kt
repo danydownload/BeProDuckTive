@@ -1,5 +1,7 @@
 package com.example.beproducktive.utils
 
+import android.graphics.Paint
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 
 
@@ -15,4 +17,13 @@ inline fun SearchView.onQueryTextChanged(crossinline listener: (String) -> Unit)
         }
 
     })
+}
+
+
+fun TextView.setStrikeThroughText(strikeThrough: Boolean) {
+    paintFlags = if (strikeThrough) {
+        paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+    } else {
+        paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+    }
 }

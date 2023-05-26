@@ -16,9 +16,11 @@
 
     <color name="red">#C00303</color>
     <color name="green">#8BC34A</color>
+    <color name="gray">#9E9E9E</color>
+
 
     <!--    <color name="rosso_corsa">#D10000</color>-->
-
+    <color name="fire_opal">#EF6055</color>
     <color name="portland_orange">#FF5733</color>
     <color name="pastel_orange">#FFB347</color>
     <color name="light_salmon">#FFA07A</color>

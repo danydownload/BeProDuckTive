@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -23,6 +24,8 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
 
     private var timeLeft: String? = "50:00"
     private var binding: FragmentTimerBinding? = null
+    private var progressBar: ProgressBar? = null
+
 
     private var isTimerRunning = true
     private var isTimerStarted = false
@@ -30,7 +33,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
     private var taskId = -1
     private var mTask : Task? = null
 
-    val sharedViewModel: TimerSharedViewModel by activityViewModels()
+    private val sharedViewModel: TimerSharedViewModel by activityViewModels()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,9 +47,29 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         binding?.apply {
             tvTimeLeft.text = timeLeft
 
+            progressBar = binding?.pbTimer
+
 
             sharedViewModel.timeLeft.observe(viewLifecycleOwner) { it_timeLeft ->
-//                Log.d("Timer_cd ", "Fragment: TimeLeft UPDATED: $it_timeLeft")
+
+                val totalTimeInSeconds: Int = if (sharedViewModel.isPauseStarted.value == true) {
+                    18
+                } else {
+                    30
+                }
+
+                // Split the time left into minutes and seconds
+                val timeLeftSplit = it_timeLeft.split(":")
+                val minutes = timeLeftSplit[0].toInt()
+                val seconds = timeLeftSplit[1].toInt()
+
+                // Calculate the remaining time in seconds
+                val remainingTimeInSeconds = minutes * 60 + seconds
+
+                // Update the progress bar with the remaining time in seconds
+                progressBar?.max = totalTimeInSeconds
+                progressBar?.progress = remainingTimeInSeconds
+
                 tvTimeLeft.text = it_timeLeft
             }
 
@@ -71,7 +94,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
 
             val startBtn: Button = btnPlayPause
             startBtn.setOnClickListener {
-                Log.d("TaskId", "TimerFragment: TaskId: $taskId")
+//                Log.d("TaskId", "TimerFragment: TaskId: $taskId")
 
                 // Do the opposite of what isTimerRunning is, beacuse the button is showing the next action
                 if (isTimerRunning) {
@@ -145,6 +168,9 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
                                 cardColor
                             )
                         )
+
+                        checkboxCompleted.isClickable = false
+
                     }
                 }
             }
@@ -155,7 +181,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         val serviceIntent = Intent(requireContext(), TimerService::class.java).apply {
             action = "RESET_TIMER"
         }
-        Log.d("Timer_cd", "resetTimerIntent called")
+//        Log.d("Timer_cd", "resetTimerIntent called")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().startForegroundService(serviceIntent)
@@ -170,7 +196,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             action = "START_TIMER"
             putExtra("task", mTask)
         }
-        Log.d("Timer_cd", "startTimerIntent called")
+//        Log.d("Timer_cd", "startTimerIntent called")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().startForegroundService(serviceIntent)
@@ -183,7 +209,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         val serviceIntent = Intent(requireContext(), TimerService::class.java).apply {
             action = "PAUSE_TIMER"
         }
-        Log.d("Timer_cd", "pauseTimerIntent called")
+//        Log.d("Timer_cd", "pauseTimerIntent called")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().startForegroundService(serviceIntent)

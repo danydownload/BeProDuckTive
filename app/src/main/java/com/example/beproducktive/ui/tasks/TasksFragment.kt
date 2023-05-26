@@ -94,13 +94,13 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
             fabAddTask.setColorFilter(ContextCompat.getColor(view.context, R.color.blue_gray))
 
             setFragmentResultListener("add_edit_request") { _, bundle ->
-                Log.d("TasksFragment", "add_edit_request")
+//                Log.d("TasksFragment", "add_edit_request")
                 val result = bundle.getInt("add_edit_result")
                 viewModel.onAddEditResult(result)
             }
 
-            Log.d("TasksFragment", "Project: ${viewModel.project}")
-            Log.d("TasksFragment", "PName: ${viewModel.projectName}")
+//            Log.d("TasksFragment", "Project: ${viewModel.project}")
+//            Log.d("TasksFragment", "PName: ${viewModel.projectName}")
 
             if (viewModel.projectName.isEmpty()) {
                 viewModel.firstProject.observe(viewLifecycleOwner) { project ->

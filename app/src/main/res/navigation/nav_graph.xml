@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/dailyViewTasksFragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/tasksFragment"
         android:name="com.example.beproducktive.ui.tasks.TasksFragment"
@@ -87,9 +87,25 @@
         <argument
             android:name="task"
             app:argType="com.example.beproducktive.data.tasks.Task" />
+        <action
+            android:id="@+id/action_timerFragment_to_dailyViewTasksFragment5"
+            app:destination="@id/dailyViewTasksFragment" />
     </fragment>
     <dialog
         android:id="@+id/deleteAllCompletedDialogFragment"
         android:name="com.example.beproducktive.ui.deleteallcompleted.DeleteAllCompletedDialogFragment"
-        android:label="DeleteAllCompletedDialogFragment" /><action android:id="@+id/action_global_deleteAllCompletedDialogFragment" app:destination="@id/deleteAllCompletedDialogFragment"/>
+        android:label="DeleteAllCompletedDialogFragment" />
+    <action android:id="@+id/action_global_deleteAllCompletedDialogFragment" app:destination="@id/deleteAllCompletedDialogFragment" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.beproducktive.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_dailyViewTasksFragment"
+            app:destination="@id/dailyViewTasksFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_timerFragment"
+            app:destination="@id/timerFragment" />
+    </fragment>
 </navigation>

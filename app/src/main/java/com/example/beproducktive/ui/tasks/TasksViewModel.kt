@@ -47,6 +47,11 @@ class TasksViewModel @Inject constructor(
         _deadline.value = deadline
     }
 
+    fun isDeadlineNull(): Boolean {
+        return _deadline.value.isEmpty()
+    }
+
+
     private val tasksFlow = combine(
         searchQuery,
         preferencesFlow,
@@ -71,6 +76,12 @@ class TasksViewModel @Inject constructor(
     val allTasksByDeadline = tasksByDeadlineFlow.asLiveData()
 
     val firstProject = projectRepository.getFirstProject().asLiveData()
+
+    var date = state.get<String>("date") ?: _deadline.value
+        set(value) {
+            field = value
+            state["date"] = value
+        }
 
     val project = state.get<Project>("project")
 

@@ -82,7 +82,7 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
                 spinnerProject.adapter = sp2Adapter
 
                 // Log projectnames and log viewModel.projectName
-                Log.d("PROJECTNAMES", projectNames.toString())
+//                Log.d("PROJECTNAMES", projectNames.toString())
 
 
                 if (viewModel.taskProject.isEmpty()) {
@@ -129,7 +129,7 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
                             val selectedPriority = TaskPriority.valueOf(selectedPriorityName)
                             viewModel.taskPriority = selectedPriority
                             // You can access the selected priority here and perform any necessary actions
-                            Log.d("Selected Priority", selectedPriority.name)
+//                            Log.d("Selected Priority", selectedPriority.name)
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -148,7 +148,7 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
                             val selectedProjectName = parent?.getItemAtPosition(position) as String
                             viewModel.taskProject = selectedProjectName
                             // You can access the selected project name here and perform any necessary actions
-                            Log.d("Selected Project", selectedProjectName)
+//                            Log.d("Selected Project", selectedProjectName)
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>?) {

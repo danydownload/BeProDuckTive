@@ -14,6 +14,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.beproducktive.R
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.ui.MainActivity
+import com.example.beproducktive.ui.tasks.TasksFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,7 +49,7 @@ class TimerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         intent?.let {
-            Log.d("Timer_cd ", "onStartCommand: ${it.action}")
+//            Log.d("Timer_cd ", "onStartCommand: ${it.action}")
             when (it.action) {
                 "START_TIMER" -> {
                     intent.extras?.let { bundle ->
@@ -95,7 +96,7 @@ class TimerService : Service() {
     }
 
 
-    private fun createNotification(timeLeftInFormattedString: String): Notification {
+    private fun createNotification(timeLeftInFormattedString: String, text: String = "Timer is running"): Notification {
 
         val intent = Intent(this, MainActivity::class.java).apply {
             action = "TIMER_FRAGMENT"
@@ -114,7 +115,7 @@ class TimerService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("BeProductive")
-            .setContentText("Timer is running: $timeLeftInFormattedString")
+            .setContentText("$text: $timeLeftInFormattedString")
             .setSmallIcon(R.drawable.ic_action_checklist_notif)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -188,9 +189,11 @@ class TimerService : Service() {
                 if (pauseCount != 0) {
                     resetTimer()
                     pauseCount = 0
+                    sendPauseIsStartedBroadcast(false)
                 } else {
                     startPause()
                     pauseCount++
+                    sendPauseIsStartedBroadcast(true)
                 }
 
                 sendTimerFinishBroadcast()
@@ -222,13 +225,14 @@ class TimerService : Service() {
         sendTimerTickBroadcast(timeLeftInFormattedString)
         sendTimerRunningBroadcast(isTimerRunning)
         sendTimerIsStartedBroadcast(isTimeStarted)
+        sendPauseIsStartedBroadcast(false)
 
 
     }
 
     private fun startPause() {
 
-        timeSelected = (0.3 * 60).toInt()
+        timeSelected = (0.2 * 60).toInt()
 
         timeCountDown?.cancel()
         timeCountDown = object : CountDownTimer(
@@ -236,12 +240,18 @@ class TimerService : Service() {
             1000
         ) {
             override fun onTick(millisUntilFinished: Long) {
+
                 val timeLeftInSeconds = millisUntilFinished / 1000
                 val timeLeftInMinutes = timeLeftInSeconds / 60
                 val timeLeftInFormattedString =
                     String.format("%02d:%02d", timeLeftInMinutes, timeLeftInSeconds % 60)
 
                 sendTimerTickBroadcast(timeLeftInFormattedString)
+
+                // Update the notification
+                val notification = createNotification(timeLeftInFormattedString, "Pause is running")
+                startForeground(NOTIFICATION_ID, notification)
+
             }
 
             override fun onFinish() {
@@ -249,6 +259,17 @@ class TimerService : Service() {
                 pauseCount = 0
                 resetTimer()
                 sendTimerFinishBroadcast()
+
+                stopSelf()
+
+                // navigate to MainActivity with intent action TIMER_TASK_FINISHED
+                val intent = Intent(this@TimerService, MainActivity::class.java).apply {
+                    action = "TIMER_TASK_FINISHED"
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    putExtra("taskId", referencedTaskId)
+                    putExtra("task", referencedTask)
+                }
+                startActivity(intent)
             }
         }
         timeCountDown?.start()
@@ -282,6 +303,12 @@ class TimerService : Service() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
+    private fun sendPauseIsStartedBroadcast(isPauseStarted: Boolean) {
+        val intent = Intent(ACTION_PAUSE_STARTED)
+        intent.putExtra(PAUSE_STARTED, isPauseStarted)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
     companion object {
         private const val CHANNEL_ID = "TimerServiceChannel"
         private const val CHANNEL_NAME = "Timer Service Channel"
@@ -290,7 +317,9 @@ class TimerService : Service() {
         const val ACTION_TIMER_FINISH = "TIMER_FINISH"
         const val ACTION_TIMER_STARTED = "TIMER_STARTED"
         const val EXTRA_TIME_REMAINING = "extra_time_remaining"
+        const val ACTION_PAUSE_STARTED = "PAUSE_STARTED"
         const val TIME_RUNNING = "time_running"
         const val TIMER_STARTED = "timer_started"
+        const val PAUSE_STARTED = "pause_started"
     }
 }

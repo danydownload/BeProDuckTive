@@ -16,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
         <TextView
             android:id="@+id/textview_project_name"
             android:layout_width="match_parent"
@@ -25,10 +26,12 @@
             android:maxLines="2"
             android:textColor="@color/blue_gray"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/checkbox_completed"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Project: " />
 
 
     </androidx.cardview.widget.CardView>
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

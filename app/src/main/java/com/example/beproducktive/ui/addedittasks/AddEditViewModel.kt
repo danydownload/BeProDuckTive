@@ -84,13 +84,6 @@ class AddEditViewModel @Inject constructor(
     }.asLiveData()
 
 
-//    var taskArchived = state.get<Boolean>("taskArchived") ?: task?.archived ?: false
-//        set(value) {
-//            field = value
-//            state.set("taskArchived", value)
-//        }
-//
-
 
     fun onSaveClick() {
         if (taskName.isBlank()) {
@@ -122,7 +115,7 @@ class AddEditViewModel @Inject constructor(
         }
     }
 
-    // This function will be called when the user taps on the "Save" button
+
     private fun editTask(task: Task) {
         viewModelScope.launch {
             taskRepository.update(task)

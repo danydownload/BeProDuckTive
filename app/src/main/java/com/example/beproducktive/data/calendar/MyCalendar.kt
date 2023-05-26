@@ -92,11 +92,8 @@ data class MyCalendar(
 
     fun getSelectedDate(): String? {
         val calendar = Calendar.getInstance()
-        println("MONTH: $month) --> ${getMonthInt(month!!)}")
         calendar.set(year?.toInt() ?: 0, getMonthInt(month!!), date?.toInt() ?: 0)
-        println("calendar.time: ${calendar.time}")
         val dateFormat = Converters().fromDate(calendar.time)
-        println("DATE: $dateFormat")
         return dateFormat
     }
 }

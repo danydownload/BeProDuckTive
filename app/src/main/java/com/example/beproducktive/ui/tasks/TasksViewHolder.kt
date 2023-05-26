@@ -16,6 +16,7 @@ import com.example.beproducktive.R
 import com.example.beproducktive.data.tasks.Task
 import com.example.beproducktive.data.tasks.TaskPriority
 import com.example.beproducktive.databinding.ItemTaskBinding
+import com.example.beproducktive.utils.setStrikeThroughText
 
 
 class TasksViewHolder(
@@ -30,7 +31,14 @@ class TasksViewHolder(
             setTaskPriority(task, cardView)
             deadline.text = task.deadlineFormatted
             textViewDescription.text = task.description
-            
+
+            if (task.completed) {
+                textviewTaskTitle.setStrikeThroughText(true)
+                imageViewTimer.isClickable = false
+            } else {
+                textviewTaskTitle.setStrikeThroughText(false)
+                imageViewTimer.isClickable = true
+            }
         }
     }
 

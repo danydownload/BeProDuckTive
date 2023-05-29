@@ -39,6 +39,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="chartsFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-450" />
+                            <option name="y" value="-208" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="dailyViewTasksFragment">
                     <value>
                       <LayoutPositions>
@@ -94,6 +106,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_loginFragment_to_dailyViewTasksFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_loginFragment_to_timerFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

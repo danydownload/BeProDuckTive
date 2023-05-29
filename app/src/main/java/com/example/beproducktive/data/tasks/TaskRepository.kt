@@ -1,5 +1,6 @@
 package com.example.beproducktive.data.tasks
 
+import android.util.Log
 import com.example.beproducktive.data.SortOrder
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -10,22 +11,39 @@ class TaskRepository @Inject constructor(
     private val taskDao: TaskDao
 ) {
 
-    fun getTasks(projectName: String, query: String, sortOrder: SortOrder, hideCompleted: Boolean) : Flow<List<Task>> =
+    fun getTasks(
+        projectName: String,
+        query: String,
+        sortOrder: SortOrder,
+        hideCompleted: Boolean
+    ): Flow<List<Task>> =
         taskDao.getTasks(projectName, query, sortOrder, hideCompleted)
 
-    fun getTasksSortedByName(projectName: String, searchQuery: String, hideCompleted: Boolean) : Flow<List<Task>> =
+    fun getTasksSortedByName(
+        projectName: String,
+        searchQuery: String,
+        hideCompleted: Boolean
+    ): Flow<List<Task>> =
         taskDao.getTasksSortedByName(projectName, searchQuery, hideCompleted)
 
-    fun getTasksSortedByDeadline(projectName: String, searchQuery: String, hideCompleted: Boolean) : Flow<List<Task>> =
+    fun getTasksSortedByDeadline(
+        projectName: String,
+        searchQuery: String,
+        hideCompleted: Boolean
+    ): Flow<List<Task>> =
         taskDao.getTasksSortedByDeadline(projectName, searchQuery, hideCompleted)
 
-    fun getTasksByDeadline(deadlineString: String, searchQuery: String, hideCompleted: Boolean) : Flow<List<Task>> =
+    fun getTasksByDeadline(
+        deadlineString: String,
+        searchQuery: String,
+        hideCompleted: Boolean
+    ): Flow<List<Task>> =
         taskDao.getTasksByDeadline(deadlineString, searchQuery, hideCompleted)
 
-    fun getTasksByProjectName(projectName: String) : Flow<List<Task>> =
+    fun getTasksByProjectName(projectName: String): Flow<List<Task>> =
         taskDao.getTasksByProjectName(projectName)
 
-    fun getTaskById(taskId: Int) : Flow<Task?> =
+    fun getTaskById(taskId: Int): Flow<Task?> =
         taskDao.getTaskById(taskId)
 
     suspend fun insert(task: Task) {
@@ -40,7 +58,7 @@ class TaskRepository @Inject constructor(
         taskDao.delete(task)
     }
 
-    fun getProjectNameForTask(taskId: Int) : Flow<String> =
+    fun getProjectNameForTask(taskId: Int): Flow<String> =
         taskDao.getProjectNameForTask(taskId)
 
     fun deleteAllTasks() =
@@ -49,9 +67,16 @@ class TaskRepository @Inject constructor(
     fun deleteCompletedTasks() =
         taskDao.deleteCompletedTasks()
 
+    fun getCompletedTasksForToday(currentDate: String): Flow<List<Task>> =
+        taskDao.getCompletedTasksForToday(currentDate)
+
+    fun getTasksForToday(currentDate: String): Flow<List<Task>> =
+        taskDao.getTasksForToday(currentDate)
+
+    fun getCompletedTasksBetweenDates(startDate: String, endDate: String): Flow<List<Task>> {
+        Log.d("TaskRepository", "getCompletedTasksBetweenDates: $startDate, $endDate")
+        return taskDao.getCompletedTasksBetweenDates(startDate, endDate)
+    }
 
 
-//    fun editTask(taskId: Int, title: String, description: String, deadline: String, priority: String, projectId: Int) {
-//        taskDao.editTask(taskId, title, description, deadline, priority, projectId)
-//    }
 }

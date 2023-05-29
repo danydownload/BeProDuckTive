@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -35,6 +36,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
     private var menuProvider: MenuProvider? = null
 
+    private lateinit var searchView: SearchView
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,7 +47,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
         val binding = FragmentTasksBinding.bind(view)
 
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
-            Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
             viewModel.onTaskSelected(viewModel.projectName, task)
         }, TasksAdapter.OnTimerClickListener { task ->
             viewModel.onTimerSelected(task)
@@ -185,7 +187,13 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 menuInflater.inflate(R.menu.menu_fragment_tasks, menu)
 
                 val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+                searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+
+                val pendingQuery = viewModel.searchQuery.value
+                if (pendingQuery.isNotEmpty()) {
+                    searchItem.expandActionView()
+                    searchView.setQuery(pendingQuery, false)
+                }
 
                 searchView.onQueryTextChanged {
                     viewModel.searchQuery.value = it
@@ -234,6 +242,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
     override fun onDestroyView() {
         super.onDestroyView()
         menuProvider?.let { (requireActivity() as MenuHost).removeMenuProvider(it) }
+        searchView.setOnQueryTextListener(null)
     }
 
 

@@ -53,7 +53,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
             sharedViewModel.timeLeft.observe(viewLifecycleOwner) { it_timeLeft ->
 
                 val totalTimeInSeconds: Int = if (sharedViewModel.isPauseStarted.value == true) {
-                    18
+                    11
                 } else {
                     30
                 }
@@ -209,6 +209,7 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
         val serviceIntent = Intent(requireContext(), TimerService::class.java).apply {
             action = "PAUSE_TIMER"
         }
+
 //        Log.d("Timer_cd", "pauseTimerIntent called")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

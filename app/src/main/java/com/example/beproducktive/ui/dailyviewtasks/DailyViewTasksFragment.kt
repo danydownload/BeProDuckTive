@@ -12,6 +12,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.setFragmentResultListener
@@ -38,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
@@ -52,6 +54,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
     private lateinit var mLayoutManager: LinearLayoutManager
     private var menuProvider: MenuProvider? = null
 
+    private lateinit var searchView: SearchView
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,7 +65,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
         setupMenu()
 
         val taskAdapter = TasksAdapter(TasksAdapter.OnClickListener { task ->
-            Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), task.taskTitle, Toast.LENGTH_SHORT).show()
 
             viewModel.onTaskSelected(task.belongsToProject, task)
 
@@ -70,10 +73,12 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             viewModel.onTimerSelected(task)
         }, TasksAdapter.OnCheckboxClickListener { task, isChecked ->
 //            Log.d("TasksFragment", "Checkbox clicked: $isChecked")
-            Snackbar.make(requireView(), "Checkbox clicked: $isChecked", Snackbar.LENGTH_SHORT)
-                .show()
+//            Snackbar.make(requireView(), "Checkbox clicked: $isChecked", Snackbar.LENGTH_SHORT)
+//                .show()
             viewModel.onCheckboxSelected(task, isChecked)
         })
+
+
 
         recyclerViewTasks2 = binding.recyclerViewTasks2
 
@@ -119,11 +124,11 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                 childTextView.startAnimation(startRotateAnimation)
                 childTextView.setTextColor(Color.CYAN)
 
-                Toast.makeText(
-                    requireContext(),
-                    "${calendar.getSelectedDate()} is selected!",
-                    Toast.LENGTH_SHORT
-                ).show()
+//                Toast.makeText(
+//                    requireContext(),
+//                    "${calendar.getSelectedDate()} is selected!",
+//                    Toast.LENGTH_SHORT
+//                ).show()
 
                 mAdapter.notifyItemChanged(calendarList.indexOf(calendar))
 
@@ -310,7 +315,13 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                 menuInflater.inflate(R.menu.menu_fragment_tasks, menu)
 
                 val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+                searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+
+                val pendingQuery = viewModel.searchQuery.value
+                if (pendingQuery.isNotEmpty()) {
+                    searchItem.expandActionView()
+                    searchView.setQuery(pendingQuery, false)
+                }
 
                 searchView.onQueryTextChanged {
                     viewModel.searchQuery.value = it
@@ -360,6 +371,7 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
     override fun onDestroyView() {
         super.onDestroyView()
         menuProvider?.let { (requireActivity() as MenuHost).removeMenuProvider(it) }
+        searchView.setOnQueryTextListener(null)
     }
 
 

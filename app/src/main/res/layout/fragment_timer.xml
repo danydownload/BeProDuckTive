@@ -50,10 +50,10 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:background="@drawable/gray_progressbar_background"
+                android:progressDrawable="@drawable/blue_progressbar_background"
                 android:indeterminate="false"
                 android:max="10"
                 android:progress="10"
-                android:progressDrawable="@drawable/blue_progressbar_background"
                 android:rotation="-90">
 
             </ProgressBar>

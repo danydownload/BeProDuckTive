@@ -149,6 +149,12 @@ class TimerService : Service() {
 
 
     private fun pauseTimer() {
+        mediaPlayerStart?.stop()
+        mediaPlayerEnd?.stop()
+
+        mediaPlayerStart?.prepare()
+        mediaPlayerEnd?.prepare()
+
         timeCountDown?.cancel()
         isTimerRunning = true
         sendTimerRunningBroadcast(isTimerRunning)
@@ -211,6 +217,13 @@ class TimerService : Service() {
     }
 
     private fun resetTimer() {
+
+        mediaPlayerStart?.stop()
+        mediaPlayerEnd?.stop()
+
+        mediaPlayerStart?.prepare()
+        mediaPlayerEnd?.prepare()
+
         timeProgress = 0
         pauseOffSet = 0
         pauseCount = 0
@@ -231,6 +244,7 @@ class TimerService : Service() {
     }
 
     private fun startPause() {
+
 
         timeSelected = (0.2 * 60).toInt()
 

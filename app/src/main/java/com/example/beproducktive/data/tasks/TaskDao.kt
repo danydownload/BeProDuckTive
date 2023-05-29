@@ -2,11 +2,17 @@ package com.example.beproducktive.data.tasks
 
 import androidx.room.*
 import com.example.beproducktive.data.SortOrder
-import com.example.beproducktive.data.projectandtasks.ProjectAndTasks
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 @Dao
 interface TaskDao {
+
+    data class CompletedTasksCountByDay(
+        @ColumnInfo(name = "day") val day: Long,
+        @ColumnInfo(name = "taskCount") val taskCount: Int
+    )
+
 
     fun getTasks(projectName: String, query: String, sortOrder: SortOrder, hideCompleted: Boolean) : Flow<List<Task>> =
         when (sortOrder) {
@@ -52,5 +58,14 @@ interface TaskDao {
 
     @Query("DELETE FROM task_table")
     fun deleteAllTasks()
+    @Query("SELECT * FROM task_table WHERE completed = 1 AND deadline = :currentDate")
+    fun getCompletedTasksForToday(currentDate: String): Flow<List<Task>>
+    @Query("SELECT * FROM task_table WHERE deadline = :currentDate")
+    fun getTasksForToday(currentDate: String): Flow<List<Task>>
+
+    @Query("SELECT * FROM task_table WHERE completed = 1 AND deadline BETWEEN :startDate AND :endDate")
+    fun getCompletedTasksBetweenDates(startDate: String, endDate: String): Flow<List<Task>>
+
+
 
 }

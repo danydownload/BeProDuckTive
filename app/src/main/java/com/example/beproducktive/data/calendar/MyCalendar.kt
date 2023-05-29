@@ -30,6 +30,12 @@ data class MyCalendar(
         return String.format("%02d-%02d-%04d", day, month, year)
     }
 
+    fun getCurrentDateMinusSeven(): String {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -7)
+        return SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(calendar.time)
+    }
+
     // -1 is because the month is 0 indexed
     private fun getMonthInt(monthName: String): Int {
         return when (monthName.lowercase(Locale.ROOT)) {

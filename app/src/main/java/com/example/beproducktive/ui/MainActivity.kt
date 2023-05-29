@@ -1,19 +1,32 @@
 package com.example.beproducktive.ui
 
 
+import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -29,6 +42,7 @@ import com.example.beproducktive.ui.timer.TimerFragmentDirections
 import com.example.beproducktive.ui.timer.TimerService
 import com.example.beproducktive.ui.timer.TimerSharedViewModel
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +52,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var drawerLayout: DrawerLayout
 
+    private val POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = 1001
+
     private val sharedViewModel: TimerSharedViewModel by viewModels()
+
+    private lateinit var requestLauncher : ActivityResultLauncher<String>
+
+    private val notificationManager: NotificationManager by lazy {
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+
 
     private val timeUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -80,9 +103,53 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun openAppNotificationSettings() {
+        val intent = Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        }
+        startActivity(intent)
+    }
+
+
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // inizialize request launcher
+        requestLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Log.d("MainActivity-2", "onCreate: Notification permission granted")
+            } else {
+                Log.d("MainActivity-2", "onCreate: Notification permission not granted")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    showGrantNotificationDialog()
+                }
+            }
+        }
+
+        // check if notification permission is granted
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d("MainActivity-2", "onCreate: Notification permission granted")
+        } else {
+            Log.d("MainActivity-2", "onCreate: Notification permission not granted")
+            // if androir 13
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                showGrantNotificationDialog()
+            }
+        }
+
 
         if (intent?.action == "TIMER_FRAGMENT") {
             val task = intent.getParcelableExtra<Task>("task")
@@ -134,6 +201,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun showGrantNotificationDialog() {
+
+        // create dialog
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("Notification Policy Permission")
+        dialogBuilder.setMessage("This app requires notification policy permission to function properly.")
+        dialogBuilder.setPositiveButton("Grant Permission") { dialog, which ->
+            openAppNotificationSettings()
+        }
+        dialogBuilder.setNegativeButton("Cancel") { dialog, which ->
+            // Handle user cancellation
+        }
+        dialogBuilder.setCancelable(false)
+        val dialog = dialogBuilder.create()
+        dialog.show()
+
+    }
+
 //    private fun navigateToTimerFragment(task: Task) {
 //        val bundle = bundleOf("task" to task)
 //        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -151,6 +237,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 FirebaseAuth.getInstance().signOut()
                 findNavController(R.id.nav_host_fragment).navigate(R.id.loginFragment)
             }
+            R.id.nav_statistics_view -> findNavController(R.id.nav_host_fragment).navigate(R.id.chartsFragment)
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

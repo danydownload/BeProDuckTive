@@ -5,7 +5,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.beproducktive.data.projects.Project
 
-class ProjectsAdapter(private val onClickListener: OnClickListener) : ListAdapter<Project, ProjectsViewHolder>(PROJECTS_COMPARATOR) {
+class ProjectsAdapter(private val onClickListener: OnClickListener) :
+    ListAdapter<Project, ProjectsViewHolder>(PROJECTS_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectsViewHolder =
         ProjectsViewHolder.create(parent)

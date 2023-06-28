@@ -98,10 +98,12 @@ class ProjectsFragment : Fragment(R.layout.fragment_projects) {
                         findNavController().navigate(action)
                         Snackbar.make(requireView(), "Project added", Snackbar.LENGTH_SHORT).show()
                     }
+
                     is ProjectsViewModel.ProjectsEvent.ShowInvalidInputMessage -> {
                         binding.editNewProject.clearFocus()
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
+
                     is ProjectsViewModel.ProjectsEvent.ShowUndoDeleteProjectMessage -> {
                         Snackbar.make(requireView(), "Project deleted", Snackbar.LENGTH_LONG)
                             .setAction("UNDO") {

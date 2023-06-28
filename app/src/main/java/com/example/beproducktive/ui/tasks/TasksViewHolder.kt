@@ -24,7 +24,7 @@ class TasksViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
 
-    fun  bind(task: Task) {
+    fun bind(task: Task) {
         binding.apply {
             checkboxCompleted.isChecked = task.completed
             textviewTaskTitle.text = task.taskTitle
@@ -62,15 +62,13 @@ class TasksViewHolder(
             priority.setTextColor(intColor)
             deadline.setTextColor(intColor)
 
-            val cardColor = when(task.priority)
-            {
+            val cardColor = when (task.priority) {
                 TaskPriority.HIGH -> R.color.pale_pink
                 TaskPriority.MEDIUM -> R.color.light_goldenrod_yellow
                 TaskPriority.LOW -> R.color.water
             }
 
-            val viewColor = when(task.priority)
-            {
+            val viewColor = when (task.priority) {
                 TaskPriority.HIGH -> R.color.misty_rose
                 TaskPriority.MEDIUM -> R.color.fawn
                 TaskPriority.LOW -> R.color.baby_blue

@@ -18,8 +18,10 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 //@Database(entities = [Project::class, Task::class], version = 3,  exportSchema = false)
-@Database(entities = [Project::class, Task::class],
-    version = 6, exportSchema = false)
+@Database(
+    entities = [Project::class, Task::class],
+    version = 6, exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class TaskDatabase : RoomDatabase() {
 
@@ -62,12 +64,36 @@ abstract class TaskDatabase : RoomDatabase() {
                     "Personal",
                     SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN).parse("22-04-2023")
                 )
-                val task5 = Task("Meet with client", true, TaskPriority.MEDIUM, "Personal", description = "American diner at 9.00pm")
-                val task6 = Task("Attend workshop", false, TaskPriority.HIGH, "Personal", description = "Argument: AI, ML and DL")
-                val task7 = Task("Go to the gym", false, TaskPriority.LOW, "Personal", description = "Leg-day")
+                val task5 = Task(
+                    "Meet with client",
+                    true,
+                    TaskPriority.MEDIUM,
+                    "Personal",
+                    description = "American diner at 9.00pm"
+                )
+                val task6 = Task(
+                    "Attend workshop",
+                    false,
+                    TaskPriority.HIGH,
+                    "Personal",
+                    description = "Argument: AI, ML and DL"
+                )
+                val task7 = Task(
+                    "Go to the gym",
+                    false,
+                    TaskPriority.LOW,
+                    "Personal",
+                    description = "Leg-day"
+                )
                 val task8 = Task("Call mom", false, TaskPriority.HIGH, "Other Things")
                 val task9 = Task("Buy birthday gift", false, TaskPriority.MEDIUM, "Other Things")
-                val task10 = Task("Book flight tickets", true, TaskPriority.LOW, "Personal", description = "Destination: NY")
+                val task10 = Task(
+                    "Book flight tickets",
+                    true,
+                    TaskPriority.LOW,
+                    "Personal",
+                    description = "Destination: NY"
+                )
 
                 val taskDao = database.get().taskDao()
                 taskDao.insert(task1)

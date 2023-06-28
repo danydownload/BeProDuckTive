@@ -221,26 +221,6 @@ class TimerFragment : Fragment(R.layout.fragment_timer) {
     }
 
 
-    override fun onStart() {
-        super.onStart()
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-    }
-
-
 }
 
 

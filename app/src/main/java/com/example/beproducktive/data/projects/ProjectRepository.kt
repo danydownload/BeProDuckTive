@@ -14,9 +14,6 @@ class ProjectRepository @Inject constructor(
     fun getProjects(): Flow<List<Project>> =
         projectDao.getProjects()
 
-    fun getProjectWithTasks(): Flow<List<ProjectAndTasks>> =
-        projectDao.getProjectWithTasks()
-
     fun getByProjectName(projectName: String?): Flow<ProjectAndTasks> =
         projectDao.getByProjectName(projectName)
 
@@ -31,12 +28,6 @@ class ProjectRepository @Inject constructor(
     suspend fun delete(project: Project) {
         projectDao.delete(project)
     }
-
-    fun getProjectNameForTask(taskId: Int) =
-        projectDao.getProjectNameForTask(taskId)
-
-    fun deleteAllProjects() =
-        projectDao.deleteAllProjects()
 
     fun getFirstProject(): Flow<Project> =
         projectDao.getFirstProject()

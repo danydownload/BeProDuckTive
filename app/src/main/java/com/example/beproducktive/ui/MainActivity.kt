@@ -52,15 +52,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var drawerLayout: DrawerLayout
 
-    private val POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = 1001
 
     private val sharedViewModel: TimerSharedViewModel by viewModels()
 
-    private lateinit var requestLauncher : ActivityResultLauncher<String>
+    private lateinit var requestLauncher: ActivityResultLauncher<String>
 
-    private val notificationManager: NotificationManager by lazy {
-        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    }
 
 
     private val timeUpdateReceiver = object : BroadcastReceiver() {
@@ -113,25 +109,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // inizialize request launcher
-        requestLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                Log.d("MainActivity-2", "onCreate: Notification permission granted")
-            } else {
-                Log.d("MainActivity-2", "onCreate: Notification permission not granted")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    showGrantNotificationDialog()
+        requestLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) {
+                    Log.d("MainActivity-2", "onCreate: Notification permission granted")
+                } else {
+                    Log.d("MainActivity-2", "onCreate: Notification permission not granted")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        showGrantNotificationDialog()
+                    }
                 }
             }
-        }
 
         // check if notification permission is granted
         if (ContextCompat.checkSelfPermission(
@@ -182,7 +175,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav_drawer, R.string.close_nav_drawer)
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.open_nav_drawer,
+            R.string.close_nav_drawer
+        )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -220,13 +219,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-//    private fun navigateToTimerFragment(task: Task) {
-//        val bundle = bundleOf("task" to task)
-//        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-//        val navController = navHostFragment.navController
-//        navController.navigate(R.id.loginFragment, bundle)
-//    }
-
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -237,6 +229,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 FirebaseAuth.getInstance().signOut()
                 findNavController(R.id.nav_host_fragment).navigate(R.id.loginFragment)
             }
+
             R.id.nav_statistics_view -> findNavController(R.id.nav_host_fragment).navigate(R.id.chartsFragment)
         }
         drawerLayout.closeDrawer(GravityCompat.START)
@@ -254,15 +247,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isTimerRunningReceiver,
-            IntentFilter(TimerService.TIME_RUNNING))
+            IntentFilter(TimerService.TIME_RUNNING)
+        )
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isTimerStartedReceiver,
-            IntentFilter(TimerService.ACTION_TIMER_STARTED))
+            IntentFilter(TimerService.ACTION_TIMER_STARTED)
+        )
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isPausedStartedReceiver,
-            IntentFilter(TimerService.ACTION_PAUSE_STARTED))
+            IntentFilter(TimerService.ACTION_PAUSE_STARTED)
+        )
 
     }
 
@@ -277,15 +273,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isTimerRunningReceiver,
-            IntentFilter(TimerService.TIME_RUNNING))
+            IntentFilter(TimerService.TIME_RUNNING)
+        )
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isTimerStartedReceiver,
-            IntentFilter(TimerService.ACTION_TIMER_STARTED))
+            IntentFilter(TimerService.ACTION_TIMER_STARTED)
+        )
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             isPausedStartedReceiver,
-            IntentFilter(TimerService.ACTION_PAUSE_STARTED))
+            IntentFilter(TimerService.ACTION_PAUSE_STARTED)
+        )
 
     }
 

@@ -40,7 +40,7 @@ class TasksViewModel @Inject constructor(
     val sortOrder = MutableStateFlow(SortOrder.BY_DEADLINE)
     val hideCompleted = MutableStateFlow(false)
 
-    private val _deadline =  MutableStateFlow("")
+    private val _deadline = MutableStateFlow("")
     val deadline: StateFlow<String> = _deadline
 
     fun setDeadline(deadline: String) {
@@ -57,8 +57,13 @@ class TasksViewModel @Inject constructor(
         preferencesFlow,
     ) { query, filterPreferences ->
         Pair(query, filterPreferences)
-    }.flatMapLatest {(query, filterPreferences) ->
-        taskRepository.getTasks(projectName, query, filterPreferences.sortOrder, filterPreferences.hideCompleted)
+    }.flatMapLatest { (query, filterPreferences) ->
+        taskRepository.getTasks(
+            projectName,
+            query,
+            filterPreferences.sortOrder,
+            filterPreferences.hideCompleted
+        )
     }
 
     val allTasks = tasksFlow.asLiveData()
@@ -67,9 +72,9 @@ class TasksViewModel @Inject constructor(
         searchQuery,
         preferencesFlow,
         deadline
-    ) { query, filterPreferences, deadlineValue  ->
-        Triple(query, filterPreferences, deadlineValue )
-    }.flatMapLatest {(query, filterPreferences, deadlineValue ) ->
+    ) { query, filterPreferences, deadlineValue ->
+        Triple(query, filterPreferences, deadlineValue)
+    }.flatMapLatest { (query, filterPreferences, deadlineValue) ->
         taskRepository.getTasksByDeadline(deadlineValue, query, filterPreferences.hideCompleted)
     }
 
@@ -116,7 +121,8 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    fun getTasksForDate(date: String?) = taskRepository.getTasksByDeadline(date!!, "", true).asLiveData()
+    fun getTasksForDate(date: String?) =
+        taskRepository.getTasksByDeadline(date!!, "", true).asLiveData()
 
     fun getProjectNameForTask(taskId: Int) =
         taskRepository.getProjectNameForTask(taskId).asLiveData()
@@ -185,7 +191,7 @@ class TasksViewModel @Inject constructor(
     fun onTaskSwiped(task: Task) = viewModelScope.launch {
         taskRepository.delete(task)
         _tasksEventChannel.send(TasksEvent.ShowUndoDeleteTaskMessage(task))
-        }
+    }
 
     fun onUndoDeleteClick(task: Task) = viewModelScope.launch {
         taskRepository.insert(task)
@@ -211,8 +217,6 @@ class TasksViewModel @Inject constructor(
         data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
         data class RefreshTasks(val dateSelected: String) : TasksEvent()
         data class ShowUndoDeleteTaskMessage(val task: Task) : TasksEvent()
-
-
 
 
     }

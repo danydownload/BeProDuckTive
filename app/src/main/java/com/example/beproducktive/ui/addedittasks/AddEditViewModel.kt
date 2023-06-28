@@ -84,7 +84,6 @@ class AddEditViewModel @Inject constructor(
     }.asLiveData()
 
 
-
     fun onSaveClick() {
         if (taskName.isBlank()) {
             showInvalidInputMessage("Name cannot be empty")

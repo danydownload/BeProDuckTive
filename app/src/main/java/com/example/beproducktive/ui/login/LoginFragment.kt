@@ -44,9 +44,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var callbackManager: CallbackManager
 
 
-    private val signInLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-        handleSignInResult(result.data)
-    }
+    private val signInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            handleSignInResult(result.data)
+        }
 
     private fun handleSignInResult(data: Intent?) {
         // Result returned from launching the Sign In PendingIntent
@@ -68,9 +69,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
 
-    private lateinit var binding : FragmentLoginBinding
+    private lateinit var binding: FragmentLoginBinding
 
-    private val sharedViewModel : TimerSharedViewModel by activityViewModels()
+    private val sharedViewModel: TimerSharedViewModel by activityViewModels()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -107,15 +108,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                 if (destination == "TIMER FRAGMENT") {
                     Log.d(TAG, "onViewCreated: destination is timer fragment")
-                    val action = LoginFragmentDirections.actionLoginFragmentToTimerFragment(sharedViewModel.task.value!!)
+                    val action =
+                        LoginFragmentDirections.actionLoginFragmentToTimerFragment(sharedViewModel.task.value!!)
                     findNavController().navigate(action)
                 }
-//                findNavController().navigate()
             }
-
-//            val action =
-//                LoginFragmentDirections.actionLoginFragmentToDailyViewTasksFragment()
-//            findNavController().navigate(action)
         }
 
         binding.apply {
@@ -136,7 +133,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             // It's impossible to complete the setup from facebook developer if the app is not published on the play store
             // so the facebook login is not working but it's implemented
             buttonFacebookLogin.setOnClickListener {
-                Snackbar.make(requireView(), "Facebook login does not work if the app is not on the play store", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    requireView(),
+                    "Facebook login does not work if the app is not on the play store",
+                    Snackbar.LENGTH_SHORT
+                ).show()
                 signInWithFacebook()
             }
 
@@ -154,6 +155,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         Log.d(TAG, "facebook:onSuccess:$loginResult")
                         handleFacebookAccessToken(loginResult.accessToken)
                     }
+
                     override fun onCancel() {
                         Log.d(TAG, "facebook:onCancel")
                     }
@@ -179,7 +181,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    Snackbar.make(binding.root, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, "Authentication Failed.", Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
     }
@@ -198,7 +201,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    Snackbar.make(binding.root, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, "Authentication Failed.", Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
     }
@@ -252,7 +256,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
 
-
     private fun signUp() {
         binding.apply {
             val email = emailTextInput.text.toString()
@@ -296,7 +299,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val action = LoginFragmentDirections.actionLoginFragmentToDailyViewTasksFragment()
+                        val action =
+                            LoginFragmentDirections.actionLoginFragmentToDailyViewTasksFragment()
                         findNavController().navigate(action)
                     } else {
                         val errorMessage = task.exception?.message ?: "Login failed"
@@ -306,7 +310,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    private fun checkError(email: String, password: String) : Boolean {
+    private fun checkError(email: String, password: String): Boolean {
         return email.isEmpty() || password.isEmpty()
     }
 

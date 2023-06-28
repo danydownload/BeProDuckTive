@@ -233,25 +233,43 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
             viewModel.tasksEvent.collect { event ->
                 when (event) {
                     TasksViewModel.TasksEvent.NavigateToAddTaskScreen -> {
-                        val action = DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(projectName = null, task = null, taskSource = TaskSource.FROM_DAILY_VIEW)
+                        val action =
+                            DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(
+                                projectName = null,
+                                task = null,
+                                taskSource = TaskSource.FROM_DAILY_VIEW
+                            )
                         findNavController().navigate(action)
                     }
+
                     is TasksViewModel.TasksEvent.NavigateToEditTaskScreen -> {
-                        val action = DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(projectName = event.projectName, task = event.task, taskSource = TaskSource.FROM_DAILY_VIEW)
+                        val action =
+                            DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToAddEditFragment(
+                                projectName = event.projectName,
+                                task = event.task,
+                                taskSource = TaskSource.FROM_DAILY_VIEW
+                            )
                         findNavController().navigate(action)
                     }
+
                     is TasksViewModel.TasksEvent.NavigateToTimerFragment -> {
-                        val action = DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToTimerFragment(event.task)
+                        val action =
+                            DailyViewTasksFragmentDirections.actionDailyViewTasksFragmentToTimerFragment(
+                                event.task
+                            )
                         findNavController().navigate(action)
                     }
+
                     is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
+
                     is TasksViewModel.TasksEvent.RefreshTasks -> {
                         viewModel.allTasksByDeadline.observe(viewLifecycleOwner) { tasksList ->
                             taskAdapter.submitList(tasksList)
                         }
                     }
+
                     TasksViewModel.TasksEvent.NavigateToProjectScreen -> {}
                     is TasksViewModel.TasksEvent.ShowUndoDeleteTaskMessage -> {
                         Snackbar.make(requireView(), "Task deleted", Snackbar.LENGTH_LONG)
@@ -259,8 +277,10 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                                 viewModel.onUndoDeleteClick(event.task)
                             }.show()
                     }
+
                     TasksViewModel.TasksEvent.NavigateToDeleteAllCompletedScreen -> {
-                        val action = TasksFragmentDirections.actionGlobalDeleteAllCompletedDialogFragment()
+                        val action =
+                            TasksFragmentDirections.actionGlobalDeleteAllCompletedDialogFragment()
                         findNavController().navigate(action)
                     }
                 }
@@ -343,18 +363,22 @@ class DailyViewTasksFragment : Fragment(R.layout.fragment_daily_view_tasks) {
                     R.id.action_sort_by_name -> {
                         true
                     }
+
                     R.id.action_sort_by_deadline -> {
                         true
                     }
+
                     R.id.action_hide_completed_tasks -> {
                         menuItem.isChecked = !menuItem.isChecked
                         viewModel.onHideCompletedClick(menuItem.isChecked)
                         true
                     }
+
                     R.id.action_delete_all_tasks -> {
                         viewModel.onDeleteAllCompletedClick()
                         true
                     }
+
                     else -> false
                 }
             }

@@ -108,10 +108,6 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 viewModel.firstProject.observe(viewLifecycleOwner) { project ->
                     project?.let {
                         viewModel.projectName = it.projectName
-//                        val list = viewModel.onReceiveProject(viewModel.projectName)
-//                        list.observe(viewLifecycleOwner) { taskList ->
-//                            taskAdapter.submitList(taskList)
-//                        }
                         viewModel.allTasks.observe(viewLifecycleOwner) { listTasks ->
                             taskAdapter.submitList(listTasks)
                         }
@@ -120,10 +116,6 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                 }
             } else {
                 textviewProjectName.text = viewModel.projectName.uppercase()
-//                val list = viewModel.onReceiveProject(viewModel.projectName)
-//                list.observe(viewLifecycleOwner) { taskList ->
-//                    taskAdapter.submitList(taskList)
-//                }
                 viewModel.allTasks.observe(viewLifecycleOwner) { listTasks ->
                     taskAdapter.submitList(listTasks)
                 }
@@ -143,6 +135,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                         )
                         findNavController().navigate(action)
                     }
+
                     is TasksViewModel.TasksEvent.NavigateToEditTaskScreen -> {
                         val action = TasksFragmentDirections.actionTasksFragmentToAddEditFragment(
                             projectName = event.projectName,
@@ -151,18 +144,22 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                         )
                         findNavController().navigate(action)
                     }
+
                     is TasksViewModel.TasksEvent.NavigateToProjectScreen -> {
                         val action = TasksFragmentDirections.actionTasksFragmentToProjectsFragment()
                         findNavController().navigate(action)
                     }
+
                     is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
+
                     is TasksViewModel.TasksEvent.NavigateToTimerFragment -> {
                         val action =
                             TasksFragmentDirections.actionTasksFragmentToTimerFragment(event.task)
                         findNavController().navigate(action)
                     }
+
                     is TasksViewModel.TasksEvent.RefreshTasks -> {}
                     is TasksViewModel.TasksEvent.ShowUndoDeleteTaskMessage -> {
                         Snackbar.make(requireView(), "Task deleted", Snackbar.LENGTH_LONG)
@@ -170,8 +167,10 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
                                 viewModel.onUndoDeleteClick(event.task)
                             }.show()
                     }
-                    TasksViewModel.TasksEvent.NavigateToDeleteAllCompletedScreen ->  {
-                        val action = TasksFragmentDirections.actionGlobalDeleteAllCompletedDialogFragment()
+
+                    TasksViewModel.TasksEvent.NavigateToDeleteAllCompletedScreen -> {
+                        val action =
+                            TasksFragmentDirections.actionGlobalDeleteAllCompletedDialogFragment()
                         findNavController().navigate(action)
                     }
                 }.exhaustive // to check that all cases are covered. It's a compiler check (compile safety)
@@ -201,31 +200,34 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     menu.findItem(R.id.action_hide_completed_tasks).isChecked =
-                            viewModel.preferencesFlow.first().hideCompleted
+                        viewModel.preferencesFlow.first().hideCompleted
                 }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
 
-                when (menuItem.itemId)
-                {
+                when (menuItem.itemId) {
                     R.id.action_sort_by_name -> {
                         viewModel.onSortOrderSelected(SortOrder.BY_NAME)
                         return true
                     }
+
                     R.id.action_sort_by_deadline -> {
                         viewModel.onSortOrderSelected(SortOrder.BY_DEADLINE)
                         return true
                     }
+
                     R.id.action_hide_completed_tasks -> {
                         menuItem.isChecked = !menuItem.isChecked
                         viewModel.onHideCompletedClick(menuItem.isChecked)
                         return true
                     }
+
                     R.id.action_delete_all_tasks -> {
                         viewModel.onDeleteAllCompletedClick()
                         return true
                     }
+
                     else -> return false
                 }
             }
@@ -244,7 +246,6 @@ class TasksFragment : Fragment(R.layout.fragment_tasks) {
         menuProvider?.let { (requireActivity() as MenuHost).removeMenuProvider(it) }
         searchView.setOnQueryTextListener(null)
     }
-
 
 
 }

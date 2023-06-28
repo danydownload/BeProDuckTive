@@ -90,8 +90,7 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
                     if (index >= 0) {
                         spinnerProject.setSelection(index)
                     }
-                }
-                else {
+                } else {
                     val index = projectNames.indexOf(viewModel.taskProject)
                     if (index >= 0) {
                         spinnerProject.setSelection(index)
@@ -168,6 +167,7 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
                     is AddEditViewModel.AddEditTaskEvent.ShowInvalidInputMessage -> {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_LONG).show()
                     }
+
                     is AddEditViewModel.AddEditTaskEvent.NavigateBackWithResult -> {
                         binding.editTextTitle.clearFocus()
                         setFragmentResult(
